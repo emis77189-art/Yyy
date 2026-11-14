@@ -1,0 +1,98 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0a0907"><title>مهامي اليوم</title>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@600;700&display=swap" rel="stylesheet">
+<style>:root{--bg:#070d18;--p:#101b2c;--l:#31445e;--ok:#20c997;--tx:#f6f4ed;--mu:#aab6c8;--b1:#fff0a7;--b2:#e8b83d;--bt:#211a08;--hot:#ffd86b;--sh:#0b1422}
+@media(prefers-color-scheme:light){:root{--bg:#eef7f0;--p:#fff;--l:#b8dfc4;--ok:#1f9d63;--tx:#1b3326;--mu:#4f6b5a;--b1:#9be3b6;--b2:#34a56a;--bt:#08301a;--hot:#c98a00;--sh:#f3faf5}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font-family:Cairo,Tahoma,Arial,sans-serif;padding:14px;max-width:560px;margin:auto}
+h1{font-size:21px;margin:6px 0}.nm{font-family:Amiri,serif;color:var(--tx)}.nm.hot{color:var(--hot);text-shadow:0 0 12px #f4c75b88}.nm.win{color:var(--hot);text-shadow:0 0 16px #f4c75bcc}
+.sc{display:flex;justify-content:space-between;align-items:center;background:var(--p);border:1px solid var(--l);border-radius:16px;padding:12px;margin:10px 0}.sc b{color:var(--hot);font-size:24px}
+.pg small{color:var(--mu)}.pg i{display:block;height:8px;border-radius:8px;background:var(--l);margin:6px 0 12px;overflow:hidden}.pg i b{display:block;height:100%;background:linear-gradient(90deg,var(--b2),var(--hot))}
+.t{background:var(--p);border:1px solid var(--l);border-radius:14px;padding:12px;margin:9px 0;display:flex;align-items:center;gap:12px}.tt{flex:1}.tt small{color:var(--mu);display:block;margin-top:3px}
+.t.done{border-color:var(--ok);opacity:.8}.t.off{opacity:.5}.t.late{border-color:#c0505e}
+button{font:inherit}.gb{border:0;border-radius:999px;padding:10px 16px;font-weight:bold;background:linear-gradient(135deg,var(--b1),var(--b2));color:var(--bt)}.gb:disabled{background:var(--l);color:var(--mu)}
+.bx{width:34px;height:34px;border:2.5px solid var(--b2);border-radius:9px;background:transparent;display:inline-grid;place-items:center;font-size:20px;color:var(--ok);flex:none}.bx.on{background:var(--ok);color:#fff;border-color:var(--ok)}.bx.no{border-color:#c0505e;color:#c0505e}.bx:disabled{opacity:.4}
+.nb{border:0;background:transparent;font-size:22px}.nt{display:block;color:#d98a00;font-size:13px;margin-top:4px}.miss{color:#d94a5c;font-size:13px;display:block;margin-top:4px}.ok{color:var(--ok);font-weight:bold}
+input,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid var(--l);background:var(--sh);color:var(--tx);font:inherit;margin:8px 0}.err{color:#d94a5c;text-align:center}
+.pc{background:var(--p);border:1px solid var(--l);border-radius:14px;padding:12px;margin:18px 0}.pc summary{font-weight:bold;color:var(--hot)}.hint{color:var(--mu);font-size:12px;display:block;text-align:center}
+.ch{border:1px solid var(--l);background:var(--sh);color:var(--tx);border-radius:12px;padding:9px 12px;margin:4px;font:inherit}.pc .ch{display:block;width:100%;text-align:right;margin:8px 0}
+.ov{position:fixed;inset:0;background:rgba(5,10,24,.96);z-index:20;display:grid;place-items:center;padding:16px;overflow:auto}.sh{background:var(--p);color:var(--tx);border-radius:18px;padding:16px;width:100%;max-width:480px}.chips{margin:8px 0}
+.sty{background:linear-gradient(160deg,#10204a,#0a1230);color:#f6f4ed;border:2px solid #e0b84f;border-radius:22px;padding:20px;max-width:520px;text-align:center}.sty h2{font-family:Amiri,serif;color:#ffe08a;font-size:28px;margin:6px}.mo{font-size:44px}.sx{font-family:Amiri,serif;font-size:21px;line-height:2.1;text-align:right;margin:14px 0}
+.cl{color:#fff;text-align:center;width:100%;max-width:420px}.av{font-size:70px}.cl h2{margin:6px}.ctx{font-size:18px;line-height:1.9;margin:16px 0;min-height:60px}.end{border:0;background:#e5384b;color:#fff;border-radius:999px;padding:14px 28px;font-weight:bold;margin:12px 0}
+#tt{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ok);color:#fff;padding:11px 18px;border-radius:999px;font-weight:bold;z-index:30;max-width:90%;text-align:center}.hwc{background:var(--p);border:1px solid var(--l);border-radius:14px;padding:10px 12px;margin:10px 0}.hwh{font-weight:bold;color:var(--hot)}.hwh small{display:block;color:var(--mu);font-weight:normal;margin-top:2px}.hw{display:flex;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--l);margin-top:8px}.gb.sm{padding:7px 12px}.hw .ch{margin:0}</style></head><body><div id="m"></div><div id="pc"></div>
+<script src="home-core.js"></script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import{getDatabase,ref,get,set,onValue,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+const db=getDatabase(initializeApp({apiKey:"AIzaSyD23rt6LjPpLfKtNnoT4Sb4DFN8XDWf8MQ",authDomain:"manssa-c72f5.firebaseapp.com",projectId:"manssa-c72f5",appId:"1:700342818242:web:140e444c4eb459a74af25b"}));const ST=[
+['الأرنب والنجوم','في غابةٍ هادئة عاش أرنبٌ صغير اسمه {n}، يحب السهر ليعدّ النجوم. وكان كل صباح يستيقظ متعبًا ولا يلحق بدرس الغابة. في ليلةٍ جاءته البومة الحكيمة وقالت: «حتى النجوم تنام نهارًا لتلمع في الليل، والجسم الصغير يكبر ويتعلم وهو نائم». ابتسم {n} ونام باكرًا، وفي الصباح استيقظ نشيطًا وأتقن درسه وفرح به أصدقاؤه. تصبح على خير يا {n}.'],
+['النحلة المجتهدة','كانت نحلةٌ صغيرة اسمها {n} تؤجّل عملها إلى الغد، فتجمع القليل من الرحيق. قالت لها جدّتها: «العسل الحلو يُصنع بقطرةٍ كل يوم، لا بكومةٍ في آخر الأسبوع». بدأت {n} تؤدي عملها كل مساء بهدوء، وبعد أيامٍ امتلأت خليتها عسلًا وفخر بها الجميع. وهكذا الواجب: قليلٌ كل يوم يصنع نجاحًا كبيرًا. نومًا هانئًا يا {n}.'],
+['السلحفاة الواثقة','سلحفاةٌ اسمها {n} ظنّت أنها أبطأ من أن تتفوق. لكنها كانت تكتب واجبها كل يوم بتأنٍّ دون أن تتوقف. وفي يوم الاختبار الكبير فوجئ الجميع بأنها الأكثر استعدادًا وهدوءًا. قال لها المعلم: «المهم ليس أن تكون الأسرع، بل أن تكون المستمر». أغمضت {n} عينيها مبتسمة، فقد عرفت سرّ النجاح. تصبح على خير يا {n}.'],
+['القمر الصغير','كان القمر يراقب الأطفال من نافذته كل ليلة، ويحزن إن رأى طفلًا مستيقظًا يتثاءب. قال لـ{n} همسًا: «نَم الآن، وسأحرس أحلامك حتى الصباح». أغمض {n} عينيه فرأى حلمًا جميلًا عن حديقةٍ مليئة بالكتب والألوان. وحين طلعت الشمس استيقظ مبتسمًا وقال: «شكرًا أيها القمر». نومًا هانئًا يا {n}.'],
+['الحقيبة المرتبة','كان {n} ينسى كتبه ودفاتره كل صباح فيركض متوترًا. في ليلةٍ حلم أن حقيبته تتكلم وتقول: «رتّبني قبل النوم، وسأجعل صباحك هادئًا». ومنذ تلك الليلة صار يجهّز حقيبته ويراجع واجبه ثم ينام باكرًا، وصار يمشي إلى مدرسته مبتسمًا وواثقًا. الترتيب راحةٌ وأمان. تصبح على خير يا {n}.'],
+['الشجرة التي تنام','في أطراف القرية شجرةٌ كبيرة تنام مبكرًا كل مساء، فتزداد أغصانها طولًا كل يوم. سأل {n} الشجرة: «كيف تكبرين هكذا؟» فهمست: «ينمو الجسم في النوم يا صغيري، فلا تحرمه منه». فهم {n} الدرس وصار ينام في موعده، وبعد شهورٍ لاحظ الجميع أنه صار أنشط وأذكى. تصبح على خير يا {n}.'],
+['العصفور الشجاع','عصفورٌ صغير اسمه {n} خاف من قراءة درسٍ صعب وقال: «لن أستطيع». قالت له أمه: «جرّب صفحةً واحدة فقط». قرأ صفحة، ثم أخرى، وفجأة صار الدرس سهلًا وجميلًا. طار {n} فرحًا وهو يقول: «ما كنتُ أعرف أني قوي!» ثم نام مطمئنًا. ابدأ دائمًا بخطوةٍ صغيرة. نومًا هانئًا يا {n}.'],
+['الصديق الصادق','كاد {n} أن يقول لأستاذه إنه أنجز واجبه وهو لم يفعل. فتذكّر أن الصدق نورٌ في القلب، فتراجع وأخبر أستاذه بالحقيقة. ابتسم الأستاذ وقال: «شكرًا لصدقك، وسأساعدك لتنجزه». شعر {n} براحةٍ لم يعرفها من قبل، فالصادق ينام قرير العين. تصبح على خير يا {n}.']
+];
+const MSG={
+hw:n=>'السلام عليكم يا '+n+'، معك الأستاذ علي. أخبرني وليّ أمرك أنك لم تؤدِّ واجبك اليوم. أنا أتوقع منك الأفضل. أنجزه الآن بإتقان، وغدًا سأسألك عنه وأريد أن أرى دفترك مكتملًا. أثق بك وأنتظر منك الالتزام. مع السلامة.',
+sleep:n=>'السلام عليكم يا '+n+'، معك الأستاذ علي. أخبرني وليّ أمرك أنك تتأخر في النوم. النوم المبكر يجعلك نشيطًا ومتفوقًا في الدرس. اذهب إلى فراشك الآن، وغدًا سأسألك كم ساعة نمت. تصبح على خير.',
+beh:n=>'السلام عليكم يا '+n+'، معك الأستاذ علي. أخبرني وليّ أمرك أنك لا تلتزم بكلامه. احترام الوالدين من أجمل صفات التلميذ المتميز. أريدك أن تعتذر وتتعاون معهم، وغدًا سأتحدث معك. أنت قادر على أن تكون قدوة لزملائك.'};
+
+const A=document.getElementById('m'),PC=document.getElementById('pc');let id=localStorage.getItem('hs_id'),off=0,st,cfg={},sch,L={},TN={};
+const MISS={wake:'لم تؤكد استيقاظك في وقته',sleep:'لم تؤكد نومك في الوقت ⚠️ نم الآن!',go:'لم تؤكد انطلاقك إلى المدرسة',back:'لم تؤكد عودتك إلى البيت'};
+const now=()=>new Date(Date.now()+off),mins=()=>{const n=now();return n.getHours()*60+n.getMinutes()};
+function toast(m){let e=document.getElementById('tt');if(e)e.remove();e=document.createElement('div');e.id='tt';e.textContent=m;document.body.append(e);setTimeout(()=>e.remove(),3500)}
+function ov(h){const d=document.createElement('div');d.className='ov';d.innerHTML=h;document.body.append(d);return d}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function guard(fn){if(cfg.pin){const q=prompt('رمز وليّ الأمر:');if(q!==String(cfg.pin)){alert('الرمز غير صحيح');return}}fn()}
+function login(msg){PC.innerHTML='';A.innerHTML='<h1>أهلًا بك 👋</h1><p>اكتب اسمك الثلاثي كما هو في سجل الصف</p><input id="n" placeholder="الاسم الثلاثي"><button id="go" class="gb" style="width:100%">دخول</button><p class="err">'+(msg||'')+'</p>'}
+function draw(){if(!st||!sch)return;const n=now(),di=n.getDay(),dk=dayKey(n);const all=Object.values(L).reduce((a,d)=>a+Object.values(d).reduce((b,x)=>b+(x.p||0),0),0);
+ const D=L[dk]||{},T=genD(cfg,sch,di),m=mins();let P=0;const ph=phase(cfg,di,m),cls=all>=600?'win':all>=50?'hot':'';
+ const banner=ph.k==='in'?'':'<div class="t" style="justify-content:center"><b>'+ph.text+'</b></div>';
+ let rows='',open=false;const close=()=>{if(open){rows+='</div>';open=false}};
+ T.forEach(t=>{const d=D[t.id],p=d?d.p||0:0;P+=p;const early=m<t.from,late=m>t.to,note=TN[t.id];
+  if(t.hw){if(!open){rows+='<div class="hwc"><div class="hwh">📚 واجبات اليوم<small>لوليّ الأمر: هل أكمل ابنكم الواجبات التالية؟</small></div>';open=true}
+   const ctl=d?(d.ok===0?'<span class="bx no">✘</span>':'<span class="bx on">✔</span>'):late?'<span class="bx no">⛔</span>':early?'<span class="hint">يُفتح '+m2t(t.from)+'</span>':'<button class="gb sm" data-y="'+t.id+'">✔ صح</button><button class="ch" data-x="'+t.id+'">✘ لا</button>';
+   rows+='<div class="hw"><div class="tt"><b>'+t.title+'</b>'+(d?'<small class="'+(d.ok===0?'miss':'ok')+'">'+(d.ok===0?'لم يكمل':'أكمل · +'+p)+'</small>':late?'<span class="miss">⛔ لم تُسجَّل الإجابة في وقتها</span>':'')+(note?'<span class="nt">📝 '+esc(note)+'</span>':'')+'</div>'+ctl+(!early?'<button class="nb" data-n="'+t.id+'">📝</button>':'')+'</div>';return}
+  close();
+  const ctl=d?'<span class="bx on">✔</span>':late?'<span class="bx no">⛔</span>':'<button class="gb" data-i="'+t.id+'" '+(early?'disabled':'')+'>'+(early?'لم يحن':({sleep:'نائم',go:'انطلقت',back:'عدت',wake:'استيقظت'})[t.id])+'</button>';
+  rows+='<div class="t '+(d?'done':late?'late':early?'off':'')+'">'+ctl+'<div class="tt"><b>'+t.title+'</b><small>'+m2t(t.from)+' – '+m2t(t.to)+(d?' · <span class="ok">+'+p+'</span>':'')+'</small>'+(!d&&late?'<span class="miss">⛔ '+(MISS[t.id]||('فاتك وقت: '+t.title))+'</span>':'')+(note?'<span class="nt">📝 '+esc(note)+'</span>':'')+'</div>'+(t.id==='sleep'?'<button class="nb" data-n="'+t.id+'">📝</button>':'')+'</div>'});close();
+ A.innerHTML='<h1 class="nm '+cls+'">'+(all>=600?'🏆 ':'')+'مرحبًا '+st.name+'</h1><div class="sc"><span>نقاط اليوم</span><b>'+P+'</b><span>المجموع</span><b>'+all+'</b></div><div class="pg"><small>الفوز عند 600 نقطة'+(all>=600?' — مبارك! 🏆':'')+'</small><i><b style="width:'+Math.min(100,all/6)+'%"></b></i></div>'+banner+rows}
+function story(){const n=st.name.split(' ')[0],k=(Math.floor(Date.now()/864e5)+[...id].reduce((a,c)=>a+c.charCodeAt(0),0))%ST.length,s=ST[k];
+ const o=ov('<div class="sty"><div class="mo">🌙</div><h2>'+s[0]+'</h2><p class="hint">وليّ الأمر: اقرأ هذه القصة بصوتٍ هادئ قبل أن ينام '+esc(n)+'</p><div class="sx">'+esc(s[1]).replace(/\{n\}/g,n)+'</div><button class="gb" id="sc">نوم هانئ 🌙</button></div>');o.querySelector('#sc').onclick=()=>o.remove()}
+function noteSheet(tid){guard(()=>{const o=ov('<div class="sh"><h3>📝 ملاحظة على المهمة</h3><div class="chips">'+['أدّاها بإتقان ✅','أدّاها لكنه متقاعس','لم يكتبها بإرادته','احتاج تذكيرًا كثيرًا','لم يرتّب دفتره'].map(c=>'<button class="ch">'+c+'</button>').join('')+'</div><textarea id="nx" rows="3" placeholder="اكتب ملاحظتك..."></textarea><button class="gb" id="ns" style="width:100%">حفظ</button><button class="ch" id="nc" style="width:100%;margin-top:8px">إلغاء</button></div>');
+  o.querySelectorAll('.ch').forEach(b=>{if(b.id!=='nc')b.onclick=()=>{document.getElementById('nx').value=b.textContent}});o.querySelector('#nc').onclick=()=>o.remove();
+  o.querySelector('#ns').onclick=async()=>{const v=document.getElementById('nx').value.trim();if(!v)return;await set(ref(db,'home/tn/'+id+'/'+dayKey(now())+'/'+tid),v);o.remove();toast('تم حفظ الملاحظة')}})}
+function ring(){try{const ac=new(window.AudioContext||window.webkitAudioContext)(),o=ac.createOscillator(),g=ac.createGain();o.frequency.value=440;g.gain.value=0;o.connect(g);g.connect(ac.destination);o.start();let k=0;const iv=setInterval(()=>{g.gain.value=(k++%4<2)?.15:0},250);return()=>{clearInterval(iv);try{o.stop();ac.close()}catch(e){}}}catch(e){return()=>{}}}
+function call(kind){const n=st.name.split(' ')[0],lab={hw:'الواجب',sleep:'النوم',beh:'السلوك'}[kind];
+ const o=ov('<div class="cl"><div class="av">👨‍🏫</div><h2>الأستاذ علي</h2><p id="cs">جارٍ الاتصال…</p><div id="ct" class="ctx"></div><button class="end" id="ce">📞 إنهاء</button><small class="hint">مكالمة تمثيلية تربوية (لا يوجد اتصال حقيقي)</small></div>');
+ const stop=ring();let said=0;const T=setTimeout(()=>{stop();o.querySelector('#cs').textContent='🟢 تم الرد';const t=MSG[kind](n);o.querySelector('#ct').textContent=t;said=1;try{const u=new SpeechSynthesisUtterance(t);u.lang='ar-SA';u.rate=.95;speechSynthesis.cancel();speechSynthesis.speak(u)}catch(e){}},4500);
+ o.querySelector('#ce').onclick=()=>{clearTimeout(T);stop();try{speechSynthesis.cancel()}catch(e){}o.remove()};
+ set(ref(db,'home/pn/'+id+'/'+Date.now()),{t:serverTimestamp(),k:'اتصال تربوي',x:lab}).catch(()=>{})}
+function pnote(){guard(()=>{const o=ov('<div class="sh"><h3>📝 ملاحظة لأستاذ علي</h3><small>للتلميذ الذي يتعبكم: اكتبوا ما يحدث ليتابعه المعلم.</small><div class="chips">'+['لا ينام مبكرًا','يرفض أداء الواجب','لا يسمع الكلام','كثير الجدال','متقاعس'].map(c=>'<button class="ch">'+c+'</button>').join('')+'</div><textarea id="px" rows="4" placeholder="اكتب الملاحظة..."></textarea><button class="gb" id="ps" style="width:100%">إرسال للأستاذ</button><button class="ch" id="pc2" style="width:100%;margin-top:8px">إلغاء</button></div>');
+  o.querySelectorAll('.ch').forEach(b=>{if(b.id!=='pc2')b.onclick=()=>{const x=document.getElementById('px');x.value=(x.value?x.value+'، ':'')+b.textContent}});o.querySelector('#pc2').onclick=()=>o.remove();
+  o.querySelector('#ps').onclick=async()=>{const v=document.getElementById('px').value.trim();if(!v)return;await set(ref(db,'home/pn/'+id+'/'+Date.now()),{t:serverTimestamp(),k:'ملاحظة',x:v});o.remove();toast('وصلت ملاحظتكم للأستاذ')}})}
+function corner(){PC.innerHTML='<details class="pc"><summary>👨‍👩‍👦 ركن وليّ الأمر</summary><p class="hint">للوالدين: تنبيه تربوي تمثيلي، وملاحظات تصل إلى الأستاذ.</p><button class="ch" data-c="hw">📞 اتصال: لم يؤدِّ واجبه</button><button class="ch" data-c="sleep">📞 اتصال: يتأخر في النوم</button><button class="ch" data-c="beh">📞 اتصال: لا يسمع الكلام</button><button class="ch" id="pn">📝 ملاحظة للأستاذ (متاعب البيت)</button></details><p style="text-align:center"><a id="out" href="#" class="hint">ليس أنا؟ تغيير الاسم</a></p>'}
+document.addEventListener('click',async e=>{const x=e.target;
+ if(x.id==='out'){e.preventDefault();localStorage.removeItem('hs_id');location.reload();return}
+ if(x.dataset&&x.dataset.c){guard(()=>call(x.dataset.c));return}
+ if(x.id==='pn'){pnote();return}
+ if(x.dataset&&x.dataset.n){noteSheet(x.dataset.n);return}
+ if(x.id==='go'){const raw=document.getElementById('n').value,ci=cmp(raw);if(ci.length<5)return login('اكتب اسمك الثلاثي كاملًا');
+  try{const N=(await get(ref(db,'home/names'))).val()||{},toks=nm(raw).split('_'),hit=new Set();
+   for(const k in N){const ck=cmp(k),kt=k.split('_');if(ck===ci||ck.startsWith(ci)||ck.includes(ci)||(toks.length>1&&toks.every(w=>kt.includes(w))))hit.add(N[k])}
+   if(!hit.size)return login('لم أجد اسمك. تأكد من كتابته كاملًا، أو راجع المعلم.');
+   if(hit.size>1)return login('يوجد أكثر من تلميذ بهذا الاسم، اكتب اسمك كاملًا.');
+   const r=[...hit][0],s=(await get(ref(db,'home/students/'+r))).val();if(!s)return login('هذا الاسم غير مفعّل، راجع المعلم.');id=r;localStorage.setItem('hs_id',id);start()}catch(e){login('تعذر الاتصال، حاول مرة أخرى.')}return}
+ const y=x.dataset&&(x.dataset.y||x.dataset.x),i=x.dataset&&(x.dataset.i||y);if(!i||!sch)return;
+ const di=now().getDay(),t=genD(cfg,sch,di).find(z=>z.id===i);if(!t)return;const p=pts(t,mins());if(p<0)return toast('لم يحن وقتها بعد');if(p===0)return toast('انتهى وقت هذه المهمة');
+ const rec=async ok=>{await set(ref(db,'home/log/'+id+'/'+dayKey(now())+'/'+i),{t:serverTimestamp(),p:ok?p:0,ok:ok?1:0,n:t.title});toast(ok?'أحسنتم! تم تسجيل: '+t.title+' (+'+p+')':'سُجّل: لم يكمل '+t.title)};
+ if(y){guard(()=>rec(!!x.dataset.y));return}
+ if(t.pin&&cfg.pin){const q=prompt('رمز وليّ الأمر:');if(q!==String(cfg.pin)){alert('الرمز غير صحيح');return}}
+ x.disabled=true;await rec(true);if(i==='sleep')story()});
+async function start(){try{st=(await get(ref(db,'home/students/'+id))).val();if(!st){localStorage.removeItem('hs_id');id=null;return login()}
+ corner();onValue(ref(db,'home/log/'+id),v=>{L=v.val()||{};draw()});onValue(ref(db,'home/tn/'+id+'/'+dayKey(now())),v=>{TN=v.val()||{};draw()});draw()}catch(e){login('تعذر الاتصال.')}}
+onValue(ref(db,'.info/serverTimeOffset'),v=>off=v.val()||0);
+onValue(ref(db,'home/config'),v=>{cfg=v.val()||{};draw()});
+onValue(ref(db,'home/schedule'),v=>{sch=v.val()||{};draw()});
+setInterval(draw,20000);id?start():login();
+</script></body></html>
