@@ -1326,7 +1326,7 @@ body.light-mode details.rep-fold>summary{background:#e9f6ee;color:#1d5a37;border
 #cel .bt{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
 #cel .bt button{border:1px solid #9e813d;background:#1d2a40;color:#ffe08a;border-radius:999px;padding:8px 14px;font:inherit;font-size:13px}
 #cel .bt .gold{background:linear-gradient(135deg,#fff0a7,#e8b83d);color:#211a08;font-weight:bold;border:0}
-#celyt{position:fixed;bottom:0;left:0;width:2px;height:2px;border:0;opacity:.01;pointer-events:none;z-index:-1}
+#celyt{position:fixed;bottom:0;left:0;width:220px;height:220px;border:0;pointer-events:none;z-index:-1}
 .ach{margin:7px 0;padding:8px 10px;border-radius:12px;background:#ffffff0d;border:1px solid #31445e}
 .ach .t{display:flex;justify-content:space-between;gap:8px;font-weight:700}.ach .m{font-size:12.5px;color:#cfd8e6;margin-top:3px}
 .ach i{display:block;height:6px;border-radius:6px;background:#31445e;margin-top:5px;overflow:hidden}.ach i b{display:block;height:100%;background:linear-gradient(90deg,#e8a317,#ffd86b)}
@@ -1359,7 +1359,7 @@ window.topAchievers=function(){try{const L=data.students.map(s=>({s,p:ptsOf(s.id
 /* ===== 4) احتفال السبعة المميزين + موسيقى ===== */
 const SONGS_DEFAULT=['https://youtube.com/shorts/ce6A62WN86E','https://youtu.be/ZoIVkB2AnUs','https://youtu.be/oeruNKs3es4','https://youtube.com/shorts/8pQdgx8kURs','https://youtube.com/shorts/GJc9XI8xb4c']; /* أضف هنا روابط يوتيوب: 'https://youtu.be/XXXXXXXXXXX' — أغنية لكل يوم بالتناوب */
 const songs=()=>{let a=[];try{a=JSON.parse(localStorage.getItem('gc_songs')||'[]')}catch(e){}return[...SONGS_DEFAULT,...a].map(u=>(String(u).match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/)||String(u).match(/^([\w-]{11})$/)||[])[1]).filter(Boolean)};
-function synth(){try{const ac=new(window.AudioContext||window.webkitAudioContext)(),mg=ac.createGain();mg.gain.value=.55;mg.connect(ac.destination);
+function synth(rec){try{const ac=new(window.AudioContext||window.webkitAudioContext)(),mg=ac.createGain();mg.gain.value=.55;if(rec){rec.d=ac.createMediaStreamDestination();mg.connect(rec.d)}else mg.connect(ac.destination);
  const sp=60/128/4,sc=[293.66,311.13,369.99,392,440,466.16,554.37,587.33],M=[4,-1,5,4,2,-1,1,-1,2,-1,4,-1,5,-1,-1,-1,7,-1,6,5,4,-1,5,-1,4,2,1,2,0,-1,-1,-1],R=[146.83,146.83,155.56,146.83,98,98,110,146.83],
  nb=ac.createBuffer(1,ac.sampleRate*.2,ac.sampleRate),nd=nb.getChannelData(0);for(let i=0;i<nd.length;i++)nd[i]=Math.random()*2-1;
  const env=(g,t,a,d,v)=>{g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(v,t+a);g.gain.exponentialRampToValueAtTime(.001,t+a+d)};
@@ -1371,21 +1371,58 @@ function synth(){try{const ac=new(window.AudioContext||window.webkitAudioContext
   if(k%2==0)tone(R[k>>2],t,sp*1.8,'sawtooth',.16);if(M[k]>=0){tone(sc[M[k]],t,sp*1.7,'sawtooth',.11);tone(sc[M[k]]*2,t,sp*1.2,'square',.04)}
   nx+=sp;st++}},25);
  return()=>{clearInterval(iv);try{ac.close()}catch(e){}}}catch(e){return()=>{}}}
+/* ===== فيديو الاحتفال للجروب ===== */
+const gcIdb=()=>new Promise((res,rej)=>{const r=indexedDB.open('gc_media',1);r.onupgradeneeded=()=>r.result.createObjectStore('f');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+const gcPut=async(k,v)=>{const d=await gcIdb();return new Promise(r=>{const t=d.transaction('f','readwrite');t.objectStore('f').put(v,k);t.oncomplete=()=>r()})};
+const gcGet=async k=>{try{const d=await gcIdb();return await new Promise(r=>{const q=d.transaction('f').objectStore('f').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)})}catch(e){return null}};
+function gcRR(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
+function gcFrame(x,W,H,t,names,P){
+ const g=x.createRadialGradient(W/2,H*.3,20,W/2,H*.3,H*.8);g.addColorStop(0,'#2a1f06');g.addColorStop(1,'#0a0907');x.fillStyle=g;x.fillRect(0,0,W,H);
+ x.save();x.translate(W/2,H*.3);x.rotate(t*.25);for(let i=0;i<18;i++){x.rotate(Math.PI*2/18);x.beginPath();x.moveTo(0,0);x.arc(0,0,H,0,Math.PI/18);x.closePath();x.fillStyle='rgba(244,199,91,.10)';x.fill()}x.restore();
+ x.textAlign='center';x.direction='rtl';x.font='90px serif';x.fillStyle='#fff';x.fillText('👑',W/2,150+Math.sin(t*2.5)*6);
+ const tg=x.createLinearGradient(0,0,W,0);tg.addColorStop(0,'#fff0a7');tg.addColorStop(.5,'#e8a317');tg.addColorStop(1,'#fff0a7');
+ x.fillStyle=tg;x.font='bold 62px "Aref Ruqaa",Amiri,Arial,sans-serif';x.shadowColor='#f4c75b';x.shadowBlur=24;x.fillText('السبعة المميزون',W/2,235);x.shadowBlur=0;
+ x.fillStyle='#ffe08a';x.font='24px Arial,sans-serif';x.fillText('🎉 تسلم إيدك يا بطل — مبروك للمتألقين 🎉',W/2,278);
+ names.forEach((n,i)=>{const e=Math.min(1,(t-(1+i*1.3))/.5);if(e<=0)return;const y=315+i*88+(1-e)*40;x.globalAlpha=e;gcRR(x,40,y,W-80,74,18);x.fillStyle='#1b1403';x.fill();x.lineWidth=3;x.strokeStyle='#e0b84f';x.stroke();
+  x.fillStyle='#ffd86b';x.font='bold 36px "Aref Ruqaa",Amiri,Arial,sans-serif';x.fillText(n,W/2,y+49);x.font='28px serif';x.fillText(['🌟','⭐','✨','🏅','🎖️','🌠','🏆'][i],W-70,y+48);x.globalAlpha=1});
+ P.forEach(p=>{p.y+=p.v;p.w+=.08;p.x+=Math.sin(p.w)*1.2;if(p.y>H){p.y=-10;p.x=Math.random()*W}x.fillStyle=p.col;x.fillRect(p.x,p.y,p.r,p.r*1.6)});
+ x.fillStyle='#e0b84f';x.font='20px Arial,sans-serif';x.textAlign='center';x.fillText('الصف الذهبي — الأستاذ علي',W/2,H-18)}
+async function gcMakeVideo(names,file,dur){dur=dur||14000;const W=540,H=960,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d'),rec={};let stopA=()=>{};
+ if(file){const AC=window.AudioContext||window.webkitAudioContext,ac=new AC(),buf=await ac.decodeAudioData(await file.arrayBuffer()),d=ac.createMediaStreamDestination(),s=ac.createBufferSource();s.buffer=buf;s.connect(d);s.start();rec.d=d;stopA=()=>{try{s.stop();ac.close()}catch(e){}}}else stopA=synth(rec);
+ const vs=cv.captureStream(30);if(rec.d)rec.d.stream.getAudioTracks().forEach(t=>vs.addTrack(t));
+ const mime=['video/mp4;codecs=avc1.42E01E,mp4a.40.2','video/mp4','video/webm;codecs=vp9,opus','video/webm'].find(m=>window.MediaRecorder&&MediaRecorder.isTypeSupported(m));if(!mime)throw new Error('هذا المتصفح لا يدعم تسجيل الفيديو');
+ const mr=new MediaRecorder(vs,{mimeType:mime,videoBitsPerSecond:2500000}),ch=[];mr.ondataavailable=e=>{if(e.data.size)ch.push(e.data)};const done=new Promise(r=>mr.onstop=r);
+ const P=Array.from({length:90},()=>({x:Math.random()*W,y:-Math.random()*H,r:3+Math.random()*5,v:1.5+Math.random()*3,w:Math.random()*6,col:['#ffd86b','#f4c75b','#ff8a1f','#fff0a7','#2ecc71','#48b9ff'][Math.random()*6|0]}));
+ const t0=performance.now();mr.start(250);
+ await new Promise(r=>{const iv=setInterval(()=>{const t=(performance.now()-t0)/1000;gcFrame(x,W,H,t,names,P);if(t*1000>=dur){clearInterval(iv);r()}},33)});
+ mr.stop();stopA();await done;return new Blob(ch,{type:mime.split(';')[0]})}
+async function gcShareVideo(k,file,btn){const names=k.list.slice(0,7).map(x=>x.name),old=btn.textContent;btn.disabled=true;
+ try{let n=14;btn.textContent='⏳ جارٍ التصوير… '+n;const iv=setInterval(()=>{n--;if(n>0)btn.textContent='⏳ جارٍ التصوير… '+n},1000);
+  const blob=await gcMakeVideo(names,file);clearInterval(iv);const ext=blob.type.includes('mp4')?'mp4':'webm',f=new File([blob],'السبعة-المميزون.'+ext,{type:blob.type});
+  const text='🌟 السبعة المميزون اليوم 🌟\n'+names.map((s,i)=>(i+1)+'. '+s).join('\n')+'\n\n— الأستاذ علي';
+  if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],text}).catch(()=>{});
+  else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=f.name;a.click();alert('تم تنزيل الفيديو. أرسله إلى الجروب من المعرض أو الملفات.')}
+ }catch(e){alert('تعذر إنشاء الفيديو: '+(e.message||e))}finally{btn.disabled=false;btn.textContent=old}}
 function celebrate(){const k=data.knights&&data.knights[kKey('day')];if(!k||!k.list||!k.list.length)return;const old=$('cel');if(old)old.remove();
  const o=document.createElement('div');o.id='cel';const day=Math.floor(Date.now()/864e5),S=songs(),vid=S.length?S[day%S.length]:'';
- o.innerHTML=`<canvas id="celc"></canvas><div class="cin"><div class="celcrown">👑</div><h1>السبعة المميزون</h1><div class="sub">🎉 تسلم إيدك يا بطل — مبروك للمتألقين 🎉</div><div class="cg">${k.list.map((x,i)=>`<div class="cc" style="animation-delay:${.4+i*.55}s"><span>#${i+1}</span><i>${['🌟','⭐','✨','🏅','🎖️','🌠','🏆'][i%7]}</i><b>${esc(x.name)}</b></div>`).join('')}</div><div class="bt"><button id="cmu" class="gold">🔊 الموسيقى</button><button id="cwa">📲 إرسال للجروب</button><button id="csg">🎵 روابط الأغاني</button><button id="cx">✖ إغلاق</button></div></div>${vid?`<iframe id="celyt" allow="autoplay;encrypted-media" src="https://www.youtube.com/embed/${vid}?autoplay=1&loop=1&playlist=${vid}"></iframe>`:''}`;
+ o.innerHTML=`<canvas id="celc"></canvas><div class="cin"><div class="celcrown">👑</div><h1>السبعة المميزون</h1><div class="sub">🎉 تسلم إيدك يا بطل — مبروك للمتألقين 🎉</div><div class="sub" style="font-size:12px;opacity:.85">${vid?'🎵 أغنية اليوم '+((day%S.length)+1)+' من '+S.length+' — اضغط ▶ إن لم يبدأ الصوت':'🎵 موسيقى مدمجة'}</div><div class="cg">${k.list.map((x,i)=>`<div class="cc" style="animation-delay:${.4+i*.55}s"><span>#${i+1}</span><i>${['🌟','⭐','✨','🏅','🎖️','🌠','🏆'][i%7]}</i><b>${esc(x.name)}</b></div>`).join('')}</div><div class="bt">${vid?'<button id="cpl" class="gold">▶ تشغيل الأغنية</button>':''}<button id="cmu">🔊 الموسيقى</button><button id="cwa">📲 إرسال للجروب</button><button id="cvd">🎬 فيديو للجروب</button><button id="caf">📂 ملف الأغنية</button><button id="csg">🎵 روابط الأغاني</button><button id="cx">✖ إغلاق</button></div></div>`;
  document.body.append(o);let stop=vid?()=>{}:synth(),on=true,raf=0;
- $('cmu').onclick=()=>{if(on){stop();stop=()=>{};const y=$('celyt');if(y)y.remove();on=false;$('cmu').textContent='🔈 تشغيل'}else{stop=synth();on=true;$('cmu').textContent='🔊 الموسيقى'}};
- $('csg').onclick=()=>{const cur=JSON.parse(localStorage.getItem('gc_songs')||'[]').join('\n'),v=prompt('ألصق روابط يوتيوب (رابط في كل سطر). تُشغَّل أغنية مختلفة كل يوم بالتناوب:',cur.replace(/\n/g,' , '));if(v!==null){localStorage.setItem('gc_songs',JSON.stringify(v.split(/[\s,،]+/).filter(Boolean)));alert('تم الحفظ. ستُشغَّل في الاحتفال القادم.')}};
+ const mk=()=>{const y=$('celyt');if(y)y.remove();if(!vid)return;const f=document.createElement('iframe');f.id='celyt';f.allow='autoplay; encrypted-media';f.src='https://www.youtube.com/embed/'+vid+'?autoplay=1&loop=1&playlist='+vid+'&playsinline=1&controls=0';document.body.append(f)};
+ mk();if($('cpl'))$('cpl').onclick=()=>{mk();on=true;$('cmu').textContent='🔊 الموسيقى'};
+ $('cmu').onclick=()=>{if(on){stop();stop=()=>{};const y=$('celyt');if(y)y.remove();on=false;$('cmu').textContent='🔈 تشغيل'}else{if(vid)mk();else stop=synth();on=true;$('cmu').textContent='🔊 الموسيقى'}};
+ $('csg').onclick=()=>{const cur=JSON.parse(localStorage.getItem('gc_songs')||'[]').join('\n'),v=prompt('عندك '+SONGS_DEFAULT.length+' أغانٍ مدمجة. ألصق هنا روابط إضافية (يوتيوب) وتتناوب كل يوم:',cur.replace(/\n/g,' , '));if(v!==null){localStorage.setItem('gc_songs',JSON.stringify(v.split(/[\s,،]+/).filter(Boolean)));alert('تم الحفظ. ستُشغَّل في الاحتفال القادم.')}};
+ let sf=null;gcGet('song').then(f=>{sf=f;if(f&&$('caf'))$('caf').textContent='📂 الأغنية: '+(f.name||'محفوظة').slice(0,14)});
+ $('caf').onclick=()=>{const i=document.createElement('input');i.type='file';i.accept='audio/*,video/*';i.onchange=async()=>{const f=i.files[0];if(!f)return;sf=f;await gcPut('song',f);$('caf').textContent='📂 الأغنية: '+f.name.slice(0,14);alert('تم حفظ ملف الأغنية. سيُستخدم في الفيديو.')};i.click()};
+ $('cvd').onclick=()=>{stop();stop=()=>{};const y=$('celyt');if(y)y.remove();on=false;$('cmu').textContent='🔈 تشغيل';gcShareVideo(k,sf,$('cvd'))};
  $('cwa').onclick=()=>{const txt='🌟 السبعة المميزون اليوم 🌟\n'+k.list.map((x,i)=>(i+1)+'. '+x.name).join('\n')+(vid?'\n\n🎵 أغنية الاحتفال (اضغط للاستماع): https://youtu.be/'+vid:'')+'\n\n— الأستاذ علي';
   if(navigator.share)navigator.share({text:txt}).catch(()=>{});else window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank')};
- $('cx').onclick=()=>{stop();cancelAnimationFrame(raf);o.remove()};
+ $('cx').onclick=()=>{stop();cancelAnimationFrame(raf);const y=$('celyt');if(y)y.remove();o.remove()};
  const c=$('celc'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;const P=Array.from({length:110},()=>({x:Math.random()*c.width,y:-Math.random()*c.height,r:3+Math.random()*5,v:1.5+Math.random()*3,w:Math.random()*6,col:['#ffd86b','#f4c75b','#ff8a1f','#fff0a7','#2ecc71','#48b9ff'][Math.random()*6|0]}));
  (function f(){x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.y+=p.v;p.w+=.08;p.x+=Math.sin(p.w)*1.2;if(p.y>c.height){p.y=-10;p.x=Math.random()*c.width}x.fillStyle=p.col;x.fillRect(p.x,p.y,p.r,p.r*1.6)});raf=requestAnimationFrame(f)})()}
 const oldRL=window.runLottery;
 if(typeof oldRL==='function')window.runLottery=async function(){let prev;try{prev=(data.knights[kKey('day')]||{}).at}catch(e){}
  const r=await oldRL.apply(this,arguments);try{const cur=(data.knights[kKey('day')]||{}).at;if(cur&&cur!==prev)celebrate()}catch(e){}return r};
-window.celebrateKnights=celebrate;window.gcSynth=synth;
+window.celebrateKnights=celebrate;window.gcSynth=synth;window.gcMakeVideo=gcMakeVideo;window.gcFrame=gcFrame;
 })();
 </script>
 
