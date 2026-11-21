@@ -1,0 +1,27 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>تشخيص السحابة</title>
+<style>body{margin:0;padding:14px;max-width:720px;margin:auto;background:#070d18;color:#f6f4ed;font-family:Tahoma,Arial,sans-serif;line-height:1.8}h1{color:#ffdf83;font-size:22px}.c{background:#101b2c;border:1px solid #31445e;border-radius:14px;padding:12px;margin:10px 0}button{border:0;border-radius:999px;padding:10px 18px;font:inherit;font-weight:700;background:linear-gradient(135deg,#fff0a7,#e8b83d);color:#211a08}pre{background:#0b1422;border:1px solid #344761;border-radius:10px;padding:10px;direction:ltr;text-align:left;overflow:auto;font-size:12.5px}.ok{color:#20c997}.no{color:#ff6577}.w{color:#f4c75b}small{color:#aab6c8}td{padding:4px 8px;border-bottom:1px solid #1d2c42;font-size:13px}table{width:100%;border-collapse:collapse}</style></head><body>
+<a href="index.html" style="color:#f4c75b;text-decoration:none">→ رجوع</a><h1>🩺 تشخيص الاتصال بالسحابة</h1>
+<div class="c">يفحص هذا الجهاز الاتصال بقاعدة بيانات Firebase المستخدمة في النسخ السحابي والنظام البيتي، ويخبرك بالسبب والحل.<br><br><button id="go">▶ ابدأ الفحص</button></div>
+<div id="out"></div>
+<script src="fb-config.js"></script>
+<script>
+const $=id=>document.getElementById(id),P=['home','backups'];
+const RULES='{\n  "rules": {\n    "backups": { ".read": true, ".write": true },\n    "home":    { ".read": true, ".write": true }\n  }\n}';
+function add(h){$('out').insertAdjacentHTML('beforeend','<div class="c">'+h+'</div>')}
+async function req(u,path,method,body){const c=new AbortController(),t=setTimeout(()=>c.abort(),8000);try{const r=await fetch(u+'/'+path+'.json'+(method?'':'?shallow=true'),{signal:c.signal,method:method||'GET',body});let x='';try{x=(await r.text()).slice(0,90)}catch(e){}return{s:r.status,x}}catch(e){return{s:0,x:String(e.message||e)}}finally{clearTimeout(t)}}
+const tag=s=>s===200?'<b class="ok">✅ مسموح</b>':s===401||s===403?'<b class="w">🔒 مرفوض (قواعد)</b>':s===404?'<b class="no">❌ لا قاعدة هنا</b>':'<b class="no">❌ لا اتصال</b>';
+$('go').onclick=async()=>{$('out').innerHTML='';$('go').disabled=true;$('go').textContent='جارٍ الفحص…';
+ if(!navigator.onLine)add('<b class="no">❌ الجهاز غير متصل بالإنترنت.</b>');
+ const C=window.FB_CANDIDATES;let rows='',good=null,denied=false,hit=null;
+ for(const u of C){const r=await Promise.all(P.map(p=>req(u,p)));rows+='<tr><td dir="ltr">'+u.replace('https://'+FB_PROJECT+'-','')+'</td>'+r.map(x=>'<td>'+tag(x.s)+'</td>').join('')+'</tr>';
+  if(r.some(x=>x.s===200||x.s===401||x.s===403)&&!hit)hit=u;if(r.every(x=>x.s===200)&&!good)good=u;if(r.some(x=>x.s===401||x.s===403))denied=true}
+ add('<b>١) العناوين المحتملة لقاعدة البيانات</b><table><tr><td></td><td>home (النظام البيتي)</td><td>backups (السحابة)</td></tr>'+rows+'</table>');
+ if(!hit){add('<b class="no">❌ لا توجد قاعدة Realtime Database تستجيب في أي عنوان.</b><br>الأسباب المحتملة: المشروع <code>'+FB_PROJECT+'</code> حُذف أو أُوقف، أو أُنشئت القاعدة في منطقة أخرى، أو لم تُنشأ أصلًا، أو الشبكة تحجب Google.<br><b>الحل:</b> افتح console.firebase.google.com ← مشروعك ← Realtime Database. إن لم توجد قاعدة اضغط Create Database. وإن وُجدت فانسخ الرابط الظاهر أعلى الصفحة وضعه في الملف fb-config.js داخل FB_URL، أو أرسله لي.')}
+ else if(good){add('<b class="ok">✅ القراءة تعمل على: </b><code dir="ltr">'+good+'</code>');
+  const w=await req(good,'home/_diag','PUT',JSON.stringify({t:Date.now()}));add('<b>٢) اختبار الكتابة:</b> '+(w.s===200?'<b class="ok">✅ الكتابة تعمل</b>':'<b class="no">❌ الكتابة مرفوضة (HTTP '+w.s+')</b>'));
+  if(w.s===200)await req(good,'home/_diag','DELETE');
+  if(w.s!==200)denied=true; else add('<b class="ok">🎉 كل شيء سليم.</b> إن بقي النظام لا يعمل فأرسل لي لقطة شاشة لرسالة الخطأ.');
+  if(good!==C[0])add('<b class="w">⚠️ قاعدتك على عنوان غير الافتراضي.</b> التطبيق يكتشفه تلقائيًا، ولتثبيته ضع في fb-config.js:<pre>window.FB_URL=\''+good+'\';</pre>')}
+ if(denied||(hit&&!good)){add('<b class="w">🔒 القاعدة موجودة لكن قواعد الأمان ترفض.</b> هذا أشهر سبب: <b>وضع الاختبار ينتهي بعد 30 يومًا</b> فتُغلق القاعدة تلقائيًا.<br><br><b>الحل (دقيقة واحدة):</b><br>١. console.firebase.google.com ← مشروعك ← Realtime Database ← تبويب <b>Rules</b>.<br>٢. امسح المحتوى والصق القواعد التالية ثم اضغط <b>Publish</b>:<pre id="r">'+RULES+'</pre><button onclick="navigator.clipboard.writeText(RULES);this.textContent=\'تم النسخ ✔\'">📋 نسخ القواعد</button><br><br><small>تنبيه: هذه القواعد تسمح لمن يملك إعدادات المشروع بالقراءة والكتابة في home وbackups لأن التطبيق بلا تسجيل دخول. هي أحسن من فتح كل شيء، ويمكن تشديدها لاحقًا.</small><br>٣. أعد تشغيل هذا الفحص.')}
+ $('go').disabled=false;$('go').textContent='▶ أعد الفحص'};
+</script></body></html>

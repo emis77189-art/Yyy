@@ -1,0 +1,19 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>إنقاذ النسخ القديمة</title>
+<style>body{margin:0;padding:14px;max-width:720px;margin:auto;background:#070d18;color:#f6f4ed;font-family:Tahoma,Arial,sans-serif;line-height:1.9}h1{color:#ffdf83;font-size:22px}.c{background:#101b2c;border:1px solid #31445e;border-radius:14px;padding:12px;margin:10px 0}button{border:0;border-radius:999px;padding:10px 18px;font:inherit;font-weight:700;background:linear-gradient(135deg,#fff0a7,#e8b83d);color:#211a08;margin:4px 0}.ok{color:#20c997}.no{color:#ff6577}.w{color:#f4c75b}small{color:#aab6c8}</style></head><body>
+<a href="index.html" style="color:#f4c75b;text-decoration:none">→ رجوع</a><h1>🛟 إنقاذ النسخ السحابية القديمة</h1>
+<div class="c">تحاول هذه الصفحة قراءة النسخ من المشروع القديم <b>manssa-c72f5</b> ونقلها إلى مشروعك الجديد، فتستعيدها بعدها من «آخر نسخة سحابية» كالمعتاد.<br><button id="go">▶ ابحث عن النسخ القديمة</button></div><div id="out"></div>
+<script>
+const OLD='manssa-c72f5',NEW='https://golden-class-dee0d-default-rtdb.firebaseio.com',$=id=>document.getElementById(id);
+const H=[OLD+'-default-rtdb.firebaseio.com',OLD+'-default-rtdb.europe-west1.firebasedatabase.app',OLD+'-default-rtdb.asia-southeast1.firebasedatabase.app',OLD+'.firebaseio.com'].map(h=>'https://'+h);
+const add=h=>$('out').insertAdjacentHTML('beforeend','<div class="c">'+h+'</div>');
+async function get(u,p){const c=new AbortController(),t=setTimeout(()=>c.abort(),30000);try{const r=await fetch(u+'/'+p+'.json',{signal:c.signal});return{s:r.status,j:r.status===200?await r.json():null}}catch(e){return{s:0}}finally{clearTimeout(t)}}
+$('go').onclick=async()=>{$('out').innerHTML='';$('go').disabled=true;$('go').textContent='جارٍ البحث…';let found=null,seen=[];
+ for(const u of H){const r=await get(u,'backups');seen.push(u.replace('https://','')+' ← '+(r.s===200?'✅':r.s===401||r.s===403?'🔒 مرفوض':r.s===404?'❌ لا قاعدة':'❌ لا اتصال'));if(r.s===200&&r.j){found={u,j:r.j};break}if(r.s===200&&!r.j){seen.push('(القاعدة تعمل لكن بلا نسخ)')}}
+ add('<b>نتيجة البحث:</b><br>'+seen.map(x=>'<small dir="ltr" style="display:block">'+x+'</small>').join(''));
+ if(!found){add('<b class="no">لم أستطع قراءة النسخ القديمة.</b><br>إذا ظهر 🔒 فالقاعدة موجودة وقواعدها مغلقة، وصاحب المشروع القديم يستطيع فتحها من Firebase. وإذا ظهر ❌ فالمشروع محذوف أو غير موجود.<br><b>جرّب:</b> ابحث في بريدك الإلكتروني عن رسائل من Firebase أو عن «manssa»، فهي تدلك على الحساب صاحب المشروع. أو اسأل من أنشأ التطبيق.')}
+ else{const b=found.j,g=b.goldenClassData||b[Object.keys(b)[0]]||{},c=g.savedContent,n=c&&c.students?(Array.isArray(c.students)?c.students.length:Object.keys(c.students).length):0;
+  add('<b class="ok">✅ وجدت نسخًا قديمة!</b><br>المفاتيح: '+Object.keys(b).join('، ')+'<br>آخر نسخة رئيسية: '+(g.backupTime?new Date(g.backupTime).toLocaleString('ar-IQ'):'—')+' — '+n+' تلميذ<br><button id="mv">📤 انقل إلى مشروعي الجديد</button><button id="dl">💾 نزّلها ملفًا (احتياط)</button>');
+  $('dl').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(b)],{type:'application/json'}));a.download='old-backups.json';a.click()};
+  $('mv').onclick=async()=>{$('mv').disabled=true;try{const r=await fetch(NEW+'/backups.json',{method:'PUT',body:JSON.stringify(b)});add(r.ok?'<b class="ok">✅ تم النقل.</b> الآن افتح الصف الذهبي ← ♻️ استرجاع ← آخر نسخة سحابية.':'<b class="no">❌ فشل النقل (HTTP '+r.status+').</b> تأكد أن قواعد المشروع الجديد منشورة.')}catch(e){add('<b class="no">❌ فشل النقل: '+e.message+'</b>')}}}
+ $('go').disabled=false;$('go').textContent='▶ أعد البحث'};
+</script></body></html>

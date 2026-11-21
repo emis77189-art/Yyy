@@ -35,7 +35,8 @@ function gen(c,d,di){
  add('sleep','أنا نائم الآن 😴',sl-30,sl+30,20,{pin:1},1);
  return T.sort((a,b)=>a.from-b.from)}
 /* نقاط: ضمن النافذة كاملة، وبعد انتهائها تُغلق المهمة */
-function pts(t,mins){if(mins<t.from)return -1;if(mins<=t.to)return t.pts;return 0}
+const GRACE=30;
+function pts(t,mins){if(mins<t.from)return -1;if(mins<=t.to)return t.pts;if(!t.pin&&mins<=t.to+GRACE)return Math.max(1,Math.floor(t.pts/2));return 0}
 /* تطبيع الاسم للبحث */
 const nm=s=>(s||'').replace(/[\u064B-\u065F\u0640]/g,'').replace(/[أإآٱ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/ئ/g,'ي').replace(/ؤ/g,'و').replace(/ء/g,'').replace(/[^\u0621-\u064Aa-zA-Z0-9\s]/g,'').trim().split(/\s+/).filter(Boolean).join('_');
 const cmp=s=>nm(s).replace(/_/g,'');
