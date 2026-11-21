@@ -1326,7 +1326,7 @@ body.light-mode details.rep-fold>summary{background:#e9f6ee;color:#1d5a37;border
 #cel .bt{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
 #cel .bt button{border:1px solid #9e813d;background:#1d2a40;color:#ffe08a;border-radius:999px;padding:8px 14px;font:inherit;font-size:13px}
 #cel .bt .gold{background:linear-gradient(135deg,#fff0a7,#e8b83d);color:#211a08;font-weight:bold;border:0}
-#celyt{position:fixed;bottom:8px;left:8px;width:150px;height:84px;border:0;border-radius:10px;z-index:4;opacity:.9}
+#celyt{position:fixed;bottom:0;left:0;width:2px;height:2px;border:0;opacity:.01;pointer-events:none;z-index:-1}
 .ach{margin:7px 0;padding:8px 10px;border-radius:12px;background:#ffffff0d;border:1px solid #31445e}
 .ach .t{display:flex;justify-content:space-between;gap:8px;font-weight:700}.ach .m{font-size:12.5px;color:#cfd8e6;margin-top:3px}
 .ach i{display:block;height:6px;border-radius:6px;background:#31445e;margin-top:5px;overflow:hidden}.ach i b{display:block;height:100%;background:linear-gradient(90deg,#e8a317,#ffd86b)}
@@ -1357,7 +1357,7 @@ window.topAchievers=function(){try{const L=data.students.map(s=>({s,p:ptsOf(s.id
   return `<div class="ach"><div class="t"><span>${ic} ${esc(x.s.name)}</span><span>${x.p} نقطة · ${nm}</span></div><div class="m">${esc(enc(f,x.p))}</div><i><b style="width:${Math.min(100,x.p/nx*100)}%"></b></i></div>`};
  modal('<h3>🌟 الأكثر إنجازًا</h3><p class="section-note">🥈 فضي من 250 · 🥇 ذهبي من 500 · 💎 ألماسي من 600</p>'+(L.length?L.map(row).join(''):'<p>لا تلاميذ بعد.</p>')+'<div class="modal-actions"><button class="gold-btn" onclick="topAchieversOld&&topAchieversOld()">📲 بطاقة المشاركة</button><button class="secondary" onclick="closeModal()">إغلاق</button></div>')}catch(e){oldTop&&oldTop()}};
 /* ===== 4) احتفال السبعة المميزين + موسيقى ===== */
-const SONGS_DEFAULT=[]; /* أضف هنا روابط يوتيوب: 'https://youtu.be/XXXXXXXXXXX' — أغنية لكل يوم بالتناوب */
+const SONGS_DEFAULT=['https://youtube.com/shorts/ce6A62WN86E','https://youtu.be/ZoIVkB2AnUs','https://youtu.be/oeruNKs3es4','https://youtube.com/shorts/8pQdgx8kURs','https://youtube.com/shorts/GJc9XI8xb4c']; /* أضف هنا روابط يوتيوب: 'https://youtu.be/XXXXXXXXXXX' — أغنية لكل يوم بالتناوب */
 const songs=()=>{let a=[];try{a=JSON.parse(localStorage.getItem('gc_songs')||'[]')}catch(e){}return[...SONGS_DEFAULT,...a].map(u=>(String(u).match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/)||String(u).match(/^([\w-]{11})$/)||[])[1]).filter(Boolean)};
 function synth(){try{const ac=new(window.AudioContext||window.webkitAudioContext)(),mg=ac.createGain();mg.gain.value=.55;mg.connect(ac.destination);
  const sp=60/128/4,sc=[293.66,311.13,369.99,392,440,466.16,554.37,587.33],M=[4,-1,5,4,2,-1,1,-1,2,-1,4,-1,5,-1,-1,-1,7,-1,6,5,4,-1,5,-1,4,2,1,2,0,-1,-1,-1],R=[146.83,146.83,155.56,146.83,98,98,110,146.83],
@@ -1373,10 +1373,12 @@ function synth(){try{const ac=new(window.AudioContext||window.webkitAudioContext
  return()=>{clearInterval(iv);try{ac.close()}catch(e){}}}catch(e){return()=>{}}}
 function celebrate(){const k=data.knights&&data.knights[kKey('day')];if(!k||!k.list||!k.list.length)return;const old=$('cel');if(old)old.remove();
  const o=document.createElement('div');o.id='cel';const day=Math.floor(Date.now()/864e5),S=songs(),vid=S.length?S[day%S.length]:'';
- o.innerHTML=`<canvas id="celc"></canvas><div class="cin"><div class="celcrown">👑</div><h1>السبعة المميزون</h1><div class="sub">🎉 تسلم إيدك يا بطل — مبروك للمتألقين 🎉</div><div class="cg">${k.list.map((x,i)=>`<div class="cc" style="animation-delay:${.4+i*.55}s"><span>#${i+1}</span><i>${['🌟','⭐','✨','🏅','🎖️','🌠','🏆'][i%7]}</i><b>${esc(x.name)}</b></div>`).join('')}</div><div class="bt"><button id="cmu" class="gold">🔊 الموسيقى</button><button id="csg">🎵 روابط الأغاني</button><button id="cx">✖ إغلاق</button></div></div>${vid?`<iframe id="celyt" allow="autoplay;encrypted-media" src="https://www.youtube.com/embed/${vid}?autoplay=1&loop=1&playlist=${vid}"></iframe>`:''}`;
+ o.innerHTML=`<canvas id="celc"></canvas><div class="cin"><div class="celcrown">👑</div><h1>السبعة المميزون</h1><div class="sub">🎉 تسلم إيدك يا بطل — مبروك للمتألقين 🎉</div><div class="cg">${k.list.map((x,i)=>`<div class="cc" style="animation-delay:${.4+i*.55}s"><span>#${i+1}</span><i>${['🌟','⭐','✨','🏅','🎖️','🌠','🏆'][i%7]}</i><b>${esc(x.name)}</b></div>`).join('')}</div><div class="bt"><button id="cmu" class="gold">🔊 الموسيقى</button><button id="cwa">📲 إرسال للجروب</button><button id="csg">🎵 روابط الأغاني</button><button id="cx">✖ إغلاق</button></div></div>${vid?`<iframe id="celyt" allow="autoplay;encrypted-media" src="https://www.youtube.com/embed/${vid}?autoplay=1&loop=1&playlist=${vid}"></iframe>`:''}`;
  document.body.append(o);let stop=vid?()=>{}:synth(),on=true,raf=0;
  $('cmu').onclick=()=>{if(on){stop();stop=()=>{};const y=$('celyt');if(y)y.remove();on=false;$('cmu').textContent='🔈 تشغيل'}else{stop=synth();on=true;$('cmu').textContent='🔊 الموسيقى'}};
  $('csg').onclick=()=>{const cur=JSON.parse(localStorage.getItem('gc_songs')||'[]').join('\n'),v=prompt('ألصق روابط يوتيوب (رابط في كل سطر). تُشغَّل أغنية مختلفة كل يوم بالتناوب:',cur.replace(/\n/g,' , '));if(v!==null){localStorage.setItem('gc_songs',JSON.stringify(v.split(/[\s,،]+/).filter(Boolean)));alert('تم الحفظ. ستُشغَّل في الاحتفال القادم.')}};
+ $('cwa').onclick=()=>{const txt='🌟 السبعة المميزون اليوم 🌟\n'+k.list.map((x,i)=>(i+1)+'. '+x.name).join('\n')+(vid?'\n\n🎵 أغنية الاحتفال (اضغط للاستماع): https://youtu.be/'+vid:'')+'\n\n— الأستاذ علي';
+  if(navigator.share)navigator.share({text:txt}).catch(()=>{});else window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank')};
  $('cx').onclick=()=>{stop();cancelAnimationFrame(raf);o.remove()};
  const c=$('celc'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;const P=Array.from({length:110},()=>({x:Math.random()*c.width,y:-Math.random()*c.height,r:3+Math.random()*5,v:1.5+Math.random()*3,w:Math.random()*6,col:['#ffd86b','#f4c75b','#ff8a1f','#fff0a7','#2ecc71','#48b9ff'][Math.random()*6|0]}));
  (function f(){x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.y+=p.v;p.w+=.08;p.x+=Math.sin(p.w)*1.2;if(p.y>c.height){p.y=-10;p.x=Math.random()*c.width}x.fillStyle=p.col;x.fillRect(p.x,p.y,p.r,p.r*1.6)});raf=requestAnimationFrame(f)})()}
