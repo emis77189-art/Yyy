@@ -185,7 +185,7 @@ body.light-mode .awin{background:#f3faf5!important;border-color:#8fcca5!importan
     <div class="stat"><span class="icon">◈</span><strong id="stat-average">—</strong><small>متوسط التقييم اليومي</small></div>
     <div class="stat"><span class="icon">🏆</span><strong id="stat-complete">0</strong><small>تقييمات مكتملة</small></div>
   </div>
-    <div class="section-head"><h2>🌟 <span>السبعة المميزون</span> — يومياً</h2><button class="gold-btn" onclick="runLottery()">🎲 إجراء القرعة</button></div><p class="section-note" style="margin:0 0 10px">يُختار 7 تلاميذ مميزين كل يوم من أصحاب تقييم «ممتاز». تُجرى القرعة إذا زاد عدد المؤهلين عن 7، وإلا يُعتمدون جميعاً.</p><div id="knights" class="knights"></div>
+    <div class="section-head"><h2>🌟 <span>السبعة المميزون</span> — يومياً</h2><button class="gold-btn" onclick="runLottery()">🎲 إجراء القرعة</button></div><p class="section-note" style="margin:0 0 10px">يُختار حتى 7 تلاميذ كل يوم: أصحاب الدرجة الكاملة أولًا، ثم الأعلى فالأعلى (من 9 فما فوق فقط) من الحاضرين.</p><div id="knights" class="knights"></div>
   <div class="section-head"><h2>👨‍🎓 قائمة التلاميذ</h2><div class="tools"><button class="success" onclick="allPresent()">✓ حضور للجميع</button><select id="sort-students" onchange="renderStudents()"><option value="alpha">ترتيب أبجدي</option><option value="score">الأعلى تقييماً</option><option value="added">حسب الإضافة</option></select><input class="search" id="search-students" placeholder="ابحث عن تلميذ..." oninput="renderStudents()"><button class="gold-btn" onclick="openNewStudent()">＋ طالب جديد</button></div></div>
   <div id="students-list" class="students"></div>
   <div class="section-head"><h2>🧭 <span>لوحة المعلم</span></h2></div><div class="dash"><div class="panel" id="need-panel"></div><div class="panel" id="imp-panel"></div><div class="panel" id="sug-panel" style="grid-column:1/-1"></div></div><details class="panel" id="chk-panel"><summary>⚡ قائمة التحقق السريعة — الواجب والكتاب والدفتر</summary><div id="chk-body" class="records-wrap"></div></details>
@@ -1404,9 +1404,10 @@ async function gcShareVideo(k,file,btn){const names=k.list.slice(0,7).map(x=>x.n
   if(navigator.canShare&&navigator.canShare({files:[f]}))await navigator.share({files:[f],text}).catch(()=>{});
   else{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=f.name;a.click();alert('تم تنزيل الفيديو. أرسله إلى الجروب من المعرض أو الملفات.')}
  }catch(e){alert('تعذر إنشاء الفيديو: '+(e.message||e))}finally{btn.disabled=false;btn.textContent=old}}
+function gcShareCanvas(cv,name,text){cv.toBlob(b=>{const f=new File([b],name,{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]}))navigator.share({files:[f],text}).catch(()=>{});else{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();toast('تم تنزيل البطاقة، أرسلها للجروب من المعرض')}},'image/png')}
 function celebrate(){const k0=data.knights&&data.knights[kKey('day')];if(!k0||!kList(k0).length){toast('أجرِ القرعة أولاً');return}const k={...k0,list:kList(k0).map(x=>{const st=data.students.find(y=>y.id===x.id);return{...x,name:st?(typeof wishT==='function'?wishT(st):'')+st.name:x.name}})};const old=$('cel');if(old)old.remove();
  const o=document.createElement('div');o.id='cel';const day=Math.floor(Date.now()/864e5),S=songs(),vid=S.length?S[day%S.length]:'';
- o.innerHTML=`<canvas id="celc"></canvas><div class="cin"><div class="celcrown">👑</div><h1>السبعة المميزون</h1><div class="sub">🎉 تسلم إيدك يا بطل — مبروك للمتألقين 🎉</div><div class="sub" id="cst" style="font-size:12px;opacity:.9">${vid?'🎵 أغنية اليوم '+((day%S.length)+1)+' من '+S.length+' — اضغط ▶ إن لم يبدأ الصوت':'🎵 موسيقى مدمجة'}</div><div class="cg">${k.list.map((x,i)=>`<div class="cc" style="animation-delay:${.4+i*.55}s"><span>#${i+1}</span><i>${['🌟','⭐','✨','🏅','🎖️','🌠','🏆'][i%7]}</i><b>${esc(x.name)}</b></div>`).join('')}</div><div class="bt">${vid?'<button id="cpl" class="gold">▶ تشغيل الأغنية</button>':''}<button id="cmu">🔊 الموسيقى</button><button id="cwa">📲 إرسال للجروب</button><button id="cvd">🎬 فيديو للجروب</button><button id="caf">📂 ملف الأغنية</button><button id="csg">🎵 روابط الأغاني</button><button id="cx">✖ إغلاق</button></div></div>`;
+ o.innerHTML=`<canvas id="celc"></canvas><div class="cin"><div class="celcrown">👑</div><h1>السبعة المميزون</h1><div class="sub">🎉 تسلم إيدك يا بطل — مبروك للمتألقين 🎉</div><div class="sub" id="cst" style="font-size:12px;opacity:.9">${vid?'🎵 أغنية اليوم '+((day%S.length)+1)+' من '+S.length+' — اضغط ▶ إن لم يبدأ الصوت':'🎵 موسيقى مدمجة'}</div><div class="cg">${k.list.map((x,i)=>`<div class="cc" style="animation-delay:${.4+i*.55}s"><span>#${i+1}</span><i>${['🌟','⭐','✨','🏅','🎖️','🌠','🏆'][i%7]}</i><b>${esc(x.name)}</b></div>`).join('')}</div><div class="bt">${vid?'<button id="cpl" class="gold">▶ تشغيل الأغنية</button>':''}<button id="cmu">🔊 الموسيقى</button><button id="cwa">📲 إرسال للجروب</button><button id="cvd">🎬 فيديو للجروب</button><button id="cim">🖼️ بطاقة للجروب</button><button id="caf">📂 ملف الأغنية</button><button id="csg">🎵 روابط الأغاني</button><button id="cx">✖ إغلاق</button></div></div>`;
  document.body.append(o);let stop=vid?()=>{}:synth(),on=true,raf=0;if(!vid)setTimeout(()=>{const a=synth.ac;if(a&&a.state!=='running'){const e=$('cst');if(e)e.textContent='👆 المس الشاشة لتفعيل الصوت (المتصفح منعه تلقائيًا)'}},400);
  let ytOK=false,fb=0;const say=t=>{const e=$('cst');if(e)e.textContent=t};
  const chk=()=>{const a=synth.ac;if(a&&a.state!=='running')say('👆 المس الشاشة لتفعيل الصوت (المتصفح منعه تلقائيًا)')};
@@ -1421,6 +1422,8 @@ function celebrate(){const k0=data.knights&&data.knights[kKey('day')];if(!k0||!k
  let sf=null;gcGet('song').then(f=>{sf=f;if(f&&$('caf'))$('caf').textContent='📂 الأغنية: '+(f.name||'محفوظة').slice(0,14)});
  $('caf').onclick=()=>{const i=document.createElement('input');i.type='file';i.accept='audio/*,video/*';i.onchange=async()=>{const f=i.files[0];if(!f)return;sf=f;await gcPut('song',f);$('caf').textContent='📂 الأغنية: '+f.name.slice(0,14);alert('تم حفظ ملف الأغنية. سيُستخدم في الفيديو.')};i.click()};
  $('cvd').onclick=()=>{stop();stop=()=>{};const y=$('celyt');if(y)y.remove();on=false;$('cmu').textContent='🔈 تشغيل';gcShareVideo(k,sf,$('cvd'))};
+ $('cim').onclick=async()=>{const nm=k.list.slice(0,7).map(x=>x.name);try{await document.fonts.load('bold 36px "El Messiri"')}catch(e){}const cv=document.createElement('canvas');cv.width=1080;cv.height=1920;const x=cv.getContext('2d');x.scale(2,2);gcFrame(x,540,960,30,nm,[]);
+  gcShareCanvas(cv,'السبعة-المميزون.png','🌟 السبعة المميزون اليوم 🌟\n'+nm.map((q,i)=>(i+1)+'. '+q).join('\n')+(vid?'\n\n🎵 أغنية الاحتفال: https://youtu.be/'+vid:'')+'\n\n— الأستاذ علي')};
  $('cwa').onclick=()=>{const txt='🌟 السبعة المميزون اليوم 🌟\n'+k.list.map((x,i)=>(i+1)+'. '+x.name).join('\n')+(vid?'\n\n🎵 أغنية الاحتفال (اضغط للاستماع): https://youtu.be/'+vid:'')+'\n\n— الأستاذ علي';
   if(navigator.share)navigator.share({text:txt}).catch(()=>{});else window.open('https://wa.me/?text='+encodeURIComponent(txt),'_blank')};
  $('cx').onclick=()=>{stop();window.removeEventListener('message',onMsg);clearTimeout(fb);cancelAnimationFrame(raf);const y=$('celyt');if(y)y.remove();o.remove()};
@@ -1429,7 +1432,7 @@ function celebrate(){const k0=data.knights&&data.knights[kKey('day')];if(!k0||!k
 const oldRL=window.runLottery;
 if(typeof oldRL==='function')window.runLottery=async function(){let prev;try{prev=(data.knights[kKey('day')]||{}).at}catch(e){}
  const r=await oldRL.apply(this,arguments);try{const cur=(data.knights[kKey('day')]||{}).at;if(cur&&cur!==prev)celebrate()}catch(e){}return r};
-window.celebrateKnights=celebrate;window.gcSynth=synth;window.gcMakeVideo=gcMakeVideo;window.gcFrame=gcFrame;
+window.celebrateKnights=celebrate;window.gcSynth=synth;window.gcMakeVideo=gcMakeVideo;window.gcShareCanvas=gcShareCanvas;window.gcFrame=gcFrame;
 });
 </script>
 
@@ -1507,7 +1510,8 @@ h1,h2,h3,h4,#profile-name,.knight .kt,.kn,.student-card h3,#cel h1,.cc b,.gc-exb
 body{line-height:1.8}
 body:not(.light-mode) .student-card.gc-ex,body.light-mode .student-card.gc-ex{background:linear-gradient(150deg,#5b34a0,#2a1a57)!important;border:2px solid #b58cff!important;box-shadow:0 0 22px #8a5cff77!important}
 .student-card.gc-ex *{color:#f1e8ff}
-.gc-exb{display:block;margin:6px auto;padding:4px 12px;border-radius:999px;background:#e3d3ff;color:#2a1459!important;font-size:16px;font-weight:700;text-align:center;width:max-content;max-width:92%;white-space:nowrap;box-shadow:0 2px 10px #0006}
+.gc-exb{position:absolute;bottom:6px;left:8px;padding:1px 8px;border-radius:999px;background:#e3d3ff;color:#2a1459!important;font-size:11px;font-weight:700;line-height:1.5;white-space:nowrap;z-index:3;box-shadow:0 1px 6px #0006}
+#gc-exp.gc-exb{position:static;display:block;margin:6px auto;width:max-content;font-size:16px;padding:4px 12px}
 </style>
 <script id="gc-patch3-js">
 gcWhenReady(function(){
@@ -1538,12 +1542,108 @@ function exUI(){document.querySelectorAll('#students-list .student-card').forEac
 const _ep=window.exPool;window.exPool=function(t){if(t!=='day')return _ep.apply(this,arguments);
  const el=data.students.map(st=>{const r=rec(st.id);if(!r||r.exempt||!r.updated||!(r.attendance==='حاضر'||r.attendance==='متأخر'))return null;return{s:st,a:avgRatings(r)}}).filter(Boolean);
  const sh=a=>{const x=[...a],o=[];while(x.length)o.push(x.splice(Math.floor(Math.random()*x.length),1)[0]);return o};
- return sh(el.filter(x=>x.a>=9.995)).concat(sh(el.filter(x=>x.a<9.995)).sort((a,b)=>b.a-a.a)).slice(0,7)};
-const _md=window.modal;window.modal=function(h){return _md.call(this,String(h).replace('القرعة بين التلاميذ ذوي التقييم «ممتاز».','يبدأ الاختيار بأصحاب الدرجة الكاملة، ثم الأعلى فالأعلى من الحاضرين.'))};
+ return sh(el.filter(x=>x.a>=9.995)).concat(sh(el.filter(x=>x.a>=9&&x.a<9.995)).sort((a,b)=>b.a-a.a)).slice(0,7)};
+const _md=window.modal;window.modal=function(h){return _md.call(this,String(h).replace('القرعة بين التلاميذ ذوي التقييم «ممتاز».','يبدأ الاختيار بأصحاب الدرجة الكاملة، ثم الأعلى فالأعلى (من 9 فما فوق فقط) من الحاضرين.'))};
 /* زر عرض الاحتفال القديم الصامت -> الاحتفال الجديد */
 window.celOpen=()=>{const k=data.knights&&data.knights[kKey('day')];if(!k||!kList(k).length){toast('أجرِ القرعة أولاً');return}window.celebrateKnights()};
 function rebind(){document.querySelectorAll('button').forEach(b=>{if(/عرض الاحتفال/.test(b.textContent)&&!b.dataset.gcb){b.dataset.gcb=1;b.onclick=window.celOpen}})}
 rebind();setInterval(()=>{try{rebind();exUI()}catch(e){}},1000);
+});
+</script>
+
+<style id="gc-patch4">
+.bal-list{max-height:52vh;overflow:auto;margin:8px 0}
+.bal-r{display:grid;grid-template-columns:1fr 86px auto auto auto;gap:6px;align-items:center;padding:8px 0;border-bottom:1px solid #ffffff14}
+.bal-n{display:flex;flex-direction:column;min-width:0}.bal-n b{font-size:15px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bal-n small{color:#a9b6c9;font-size:12px}
+.bal-r input{width:100%;min-width:0;padding:7px;border-radius:10px;text-align:center}
+.bal-r .sm{padding:7px 11px;border-radius:10px;border:0;font-weight:700;background:#31445e;color:#fff}.bal-r .bp{background:#1f9d62}.bal-r .bm{background:#c0392b}
+.bal-pv{grid-column:1/-1;color:#ffd86b;min-height:0}
+.bal-u{display:block;margin:6px 0;font-size:13px}.bal-u select{max-width:100%}
+#gc-rm{margin:14px 0;padding:14px;border-radius:18px;border:2px solid #e0b84f;background:linear-gradient(135deg,#2b2207,#101b2c);display:flex;align-items:center;gap:12px;flex-wrap:wrap;box-shadow:0 0 22px #f4c75b44}
+#gc-rm .k{font:700 13px 'IBM Plex Sans Arabic',sans-serif;color:#ffd86b}#gc-rm .n{font:700 24px 'El Messiri',serif;color:#fff}#gc-rm small{color:#a9b6c9}
+#gc-rm button,.occ-r button,.occ-f button{border:0;border-radius:999px;padding:7px 14px;font:inherit;font-size:13px;font-weight:700;background:linear-gradient(135deg,#fff0a7,#e8b83d);color:#211a08}
+.gc-rmb{position:absolute;top:6px;left:8px;font-size:20px;filter:drop-shadow(0 0 6px #f4c75b);z-index:3}
+.student-card{position:relative}
+.occ-r{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid #ffffff14}.occ-r b{font-size:14px}.occ-r small{display:block;color:#a9b6c9}
+.occ-f{display:grid;gap:8px;margin:8px 0}.occ-f input,.occ-f select{padding:9px;border-radius:10px;width:100%}
+</style>
+<script id="gc-patch4-js">
+gcWhenReady(function(){
+const $=id=>document.getElementById(id);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* ===== رصيد التلاميذ من النقاط ===== */
+const adjOf=id=>((data.adj||{})[id]||[]),adjSum=id=>Math.round(adjOf(id).reduce((a,x)=>a+(x.p||0),0)*10)/10;
+const _pts=window.ptsOf;window.ptsOf=function(id){return Math.max(0,Math.round((_pts(id)+adjSum(id))*10)/10)};
+const lvn=v=>v.l[0].split(' ')[0];
+window.gcBal=function(){data.adj=data.adj||{};const u=localStorage.getItem('gc_bal_u')||'ev',old=document.querySelector('.bal-list'),sc=old?old.scrollTop:0;
+ const L=[...data.students].sort((a,b)=>String(a.name).localeCompare(String(b.name),'ar'));
+ const rows=L.map(s=>{const v=lvOf(s.id),a=adjSum(s.id);return '<div class="bal-r"><div class="bal-n"><b>'+esc(s.name)+'</b><small>'+v.l[1]+' '+lvn(v)+' · '+v.p+' نقطة'+(a?' · تعديلات '+(a>0?'+':'')+a:'')+'</small></div><input type="number" inputmode="decimal" step="any" id="bi-'+s.id+'" placeholder="±" oninput="gcBalPrev(\''+s.id+'\')"><button class="sm bp" onclick="gcBalDo(\''+s.id+'\',1)">＋</button><button class="sm bm" onclick="gcBalDo(\''+s.id+'\',-1)">－</button><button class="sm" title="تراجع عن آخر تعديل" onclick="gcBalUndo(\''+s.id+'\')">↩</button><small class="bal-pv" id="bp-'+s.id+'"></small></div>'}).join('');
+ modal('<h3>💰 رصيد التلاميذ من النقاط</h3><label class="bal-u">الوحدة: <select onchange="localStorage.setItem(\'gc_bal_u\',this.value);gcBal()"><option value="ev"'+(u==='ev'?' selected':'')+'>درجات التقييم (كل 50 = 10 نقاط)</option><option value="pt"'+(u==='pt'?' selected':'')+'>نقاط الرصيد مباشرة</option></select></label><div class="bal-list">'+(rows||'<p>لا تلاميذ.</p>')+'</div><div class="modal-actions"><button class="secondary" onclick="closeModal()">إغلاق</button></div>');
+ const nl=document.querySelector('.bal-list');if(nl)nl.scrollTop=sc};
+window.gcBalPrev=id=>{const v=parseFloat($('bi-'+id).value),u=localStorage.getItem('gc_bal_u')||'ev',e=$('bp-'+id);e.textContent=v&&!isNaN(v)?'= '+(Math.round((u==='ev'?v/5:v)*10)/10)+' نقطة في الرصيد':''};
+window.gcBalDo=(id,sg)=>{const v=Math.abs(parseFloat($('bi-'+id).value)),u=localStorage.getItem('gc_bal_u')||'ev';if(!v||isNaN(v)){toast('اكتب الرقم أولًا');return}
+ const p=Math.round((u==='ev'?v/5:v)*sg*10)/10;if(!p){toast('القيمة صغيرة جدًا');return}const b=lvOf(id);data.adj=data.adj||{};(data.adj[id]=data.adj[id]||[]).push({d:isoToday(),n:v*sg,u,p});save();const a=lvOf(id),st=data.students.find(x=>x.id===id);
+ toast((p>0?'➕ أُضيف ':'➖ خُصم ')+Math.abs(p)+' نقطة — '+st.name+(a.i!==b.i?' · انتقل من '+lvn(b)+' إلى '+lvn(a):'')+' (الرصيد '+a.p+')');gcBal()};
+window.gcBalUndo=id=>{const l=adjOf(id);if(!l.length){toast('لا توجد تعديلات للتراجع');return}const x=l.pop();save();toast('↩ تراجعت عن '+(x.p>0?'+':'')+x.p+' نقطة');gcBal()};
+const _mt=window.moreTools;window.moreTools=function(){_mt.apply(this,arguments);const w=document.querySelector('.awrap');if(w&&!w.querySelector('[data-gc]'))w.insertAdjacentHTML('afterbegin','<button class="gold-btn" data-gc onclick="gcBal()">💰 رصيد التلاميذ من النقاط</button><button class="secondary" data-gc onclick="gcOcc()">🕌 المناسبات الدينية</button>')};
+const cb=$('clockbar');if(cb&&!cb.querySelector('[data-occ]'))cb.insertAdjacentHTML('beforeend','<button class="ck-btn" data-occ onclick="gcOcc()">🕌 مناسبات</button>');
+/* ===== القدوة المثالي ===== */
+function rmCalc(){const L=data.students.map(s=>{let n=0,sum=0;for(const d in data.days){const r=data.days[d]&&data.days[d][s.id];if(!r||!r.updated||r.exempt||!schoolDay(d)||!(r.attendance==='حاضر'||r.attendance==='متأخر'))continue;n++;sum+=avgRatings(r)}return{s,n,a:n?sum/n:0}}).filter(x=>x.n>0);
+ const min=Math.min(5,Math.max(0,...L.map(x=>x.n))),E=L.filter(x=>x.n>=min).sort((a,b)=>Math.round(b.a*100)-Math.round(a.a*100)||b.n-a.n||ptsOf(b.s.id)-ptsOf(a.s.id));return E[0]||null}
+let rmSig='';
+function rmUI(){const f=$('gc-week')||$('rep-fold');if(!f||!data.students||!data.students.length)return;const r=rmCalc();let h=$('gc-rm');
+ if(!r){if(h)h.remove();window.gcRM=null;return}window.gcRM=r;
+ if(!h){h=document.createElement('div');h.id='gc-rm';f.before(h)}
+ const sig=r.s.id+'|'+r.a.toFixed(2)+'|'+r.n;if(sig!==rmSig||!h.innerHTML){rmSig=sig;h.innerHTML='<div style="font-size:42px">👑</div><div style="flex:1;min-width:150px"><div class="k">القدوة المثالي · منذ بداية الدوام حتى اليوم</div><div class="n">'+esc(r.s.name)+'</div><small>معدل التقييم '+(Math.round(r.a*100)/100)+' من 10 — في '+r.n+' يوم تقييم</small></div><button onclick="gcRmCard()">🖼️ بطاقة للجروب</button>'}}
+function badges(){const r=window.gcRM;document.querySelectorAll('#students-list .student-card').forEach(c=>{const m=(c.innerHTML.match(/openProfile\('([^']+)'\)/)||[])[1],is=!!(r&&m===r.s.id);let b=c.querySelector('.gc-rmb');if(is&&!b){b=document.createElement('span');b.className='gc-rmb';b.title='القدوة المثالي';b.textContent='👑';c.append(b)}else if(!is&&b)b.remove()})}
+/* ===== بطاقات (مناسبات / قدوة) ===== */
+function wrapT(x,t,maxW){const w=String(t).split(' '),L=[];let c='';w.forEach(k=>{const tt=c?c+' '+k:k;if(x.measureText(tt).width>maxW&&c){L.push(c);c=k}else c=tt});if(c)L.push(c);return L}
+async function cardDraw(o){try{await document.fonts.load('bold 84px "El Messiri"');await document.fonts.load('600 40px "IBM Plex Sans Arabic"')}catch(e){}
+ const W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d'),mo=o.type==='m';
+ const g=x.createLinearGradient(0,0,0,H);if(mo){g.addColorStop(0,'#17121f');g.addColorStop(.55,'#0d1b1a');g.addColorStop(1,'#050808')}else{g.addColorStop(0,'#06281f');g.addColorStop(.6,'#0b3b2d');g.addColorStop(1,'#04160f')}x.fillStyle=g;x.fillRect(0,0,W,H);
+ const rg=x.createRadialGradient(W/2,420,10,W/2,420,640);rg.addColorStop(0,mo?'rgba(244,199,91,.16)':'rgba(244,199,91,.30)');rg.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=rg;x.fillRect(0,0,W,H);
+ x.fillStyle='rgba(244,199,91,.06)';for(let i=0;i<7;i++)for(let j=0;j<9;j++){const cx=70+i*150+(j%2)*75,cy=90+j*150;x.beginPath();for(let k=0;k<16;k++){const a=k*Math.PI/8,r=k%2?14:34;x.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r)}x.closePath();x.fill()}
+ const rr=(a,b,w,h,r)=>{x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()};
+ x.strokeStyle='#e0b84f';x.lineWidth=7;rr(40,40,W-80,H-80,38);x.stroke();x.lineWidth=2;rr(64,64,W-128,H-128,28);x.stroke();
+ x.textAlign='center';x.direction='rtl';x.fillStyle='#fff';x.font='150px serif';x.fillText(o.emoji||(mo?'🕯️':'🌙'),W/2,290);
+ x.fillStyle='#ffd86b';x.font='600 42px "IBM Plex Sans Arabic",Arial,sans-serif';x.fillText(o.kicker||'',W/2,385);
+ x.font='bold 88px "El Messiri",Arial,sans-serif';const lines=wrapT(x,String(o.title).replace(/ \((ع|ص|عج)\)/g,'\u00A0($1)').replace(/(السيدة|الإمام|أبي|أم|أمير) /g,'$1\u00A0').replace(/(المؤمنين|البنين) /g,'$1\u00A0'),W-210),tg=x.createLinearGradient(0,0,W,0);tg.addColorStop(0,'#fff0a7');tg.addColorStop(.5,'#e8a317');tg.addColorStop(1,'#fff0a7');x.fillStyle=tg;x.shadowColor='rgba(244,199,91,.55)';x.shadowBlur=26;
+ const lh=118,y0=520;lines.slice(0,4).forEach((l,i)=>x.fillText(l,W/2,y0+i*lh));x.shadowBlur=0;
+ let y=y0+Math.min(lines.length,4)*lh+10;x.strokeStyle='#e0b84f';x.lineWidth=3;x.beginPath();x.moveTo(W/2-200,y);x.lineTo(W/2-20,y);x.moveTo(W/2+20,y);x.lineTo(W/2+200,y);x.stroke();x.fillStyle='#e0b84f';x.save();x.translate(W/2,y);x.rotate(Math.PI/4);x.fillRect(-9,-9,18,18);x.restore();y+=80;
+ x.fillStyle='#f3ead0';x.font='500 46px "IBM Plex Sans Arabic",Arial,sans-serif';(o.lines||[]).forEach(t=>{x.fillText(t,W/2,y);y+=66});
+ x.fillStyle='#fff';x.font='bold 60px "El Messiri",Arial,sans-serif';x.fillText(o.greeting||'',W/2,H-210);
+ x.fillStyle='#e0b84f';x.font='500 34px "IBM Plex Sans Arabic",Arial,sans-serif';x.fillText('الصف الذهبي — الأستاذ علي',W/2,H-120);return cv}
+async function cardShow(o,text){const cv=await cardDraw(o);modal('<h3>🖼️ البطاقة</h3><img src="'+cv.toDataURL('image/png')+'" style="width:100%;border-radius:14px"><div class="modal-actions"><button class="gold-btn" id="gc-csh">📲 إرسال للجروب</button><button class="secondary" id="gc-csv">💾 حفظ</button><button class="secondary" onclick="'+(o.back||'closeModal()')+'">رجوع</button></div>');
+ $('gc-csh').onclick=()=>window.gcShareCanvas(cv,'بطاقة.png',text);$('gc-csv').onclick=()=>{const a=document.createElement('a');a.href=cv.toDataURL('image/png');a.download='بطاقة.png';a.click()}}
+window.gcRmCard=()=>{const r=window.gcRM;if(!r)return;cardShow({type:'j',emoji:'👑',kicker:'القدوة المثالي',title:r.s.name,lines:['معدل التقييم '+(Math.round(r.a*100)/100)+' من 10','منذ بداية الدوام حتى اليوم'],greeting:'نفخر بك يا بطل 🌟'},'👑 القدوة المثالي: '+r.s.name+'\nمعدل التقييم '+(Math.round(r.a*100)/100)+' من 10 منذ بداية الدوام حتى اليوم.\n\n— الأستاذ علي')};
+/* ===== المناسبات الدينية ===== */
+const HM=['محرم','صفر','ربيع الأول','ربيع الآخر','جمادى الأولى','جمادى الآخرة','رجب','شعبان','رمضان','شوال','ذو القعدة','ذو الحجة'];
+const OCC=[[1,1,'رأس السنة الهجرية','j'],[1,10,'استشهاد الإمام الحسين (ع) — يوم عاشوراء','m'],[1,25,'استشهاد الإمام زين العابدين (ع)','m'],[2,20,'أربعينية الإمام الحسين (ع)','m'],[2,28,'رحيل النبي الأكرم (ص) واستشهاد الإمام الحسن (ع)','m'],[2,30,'استشهاد الإمام الرضا (ع)','m'],[3,8,'استشهاد الإمام الحسن العسكري (ع)','m'],[3,17,'المولد النبوي الشريف ومولد الإمام الصادق (ع)','j'],[6,3,'استشهاد السيدة فاطمة الزهراء (ع)','m'],[6,13,'استشهاد السيدة أم البنين (ع)','m'],[6,20,'مولد السيدة فاطمة الزهراء (ع)','j'],[7,1,'مولد الإمام الباقر (ع)','j'],[7,3,'استشهاد الإمام الهادي (ع)','m'],[7,10,'مولد الإمام الجواد (ع)','j'],[7,13,'مولد أمير المؤمنين الإمام علي (ع)','j'],[7,15,'وفاة السيدة زينب (ع)','m'],[7,25,'استشهاد الإمام الكاظم (ع)','m'],[7,27,'المبعث النبوي الشريف','j'],[8,3,'مولد الإمام الحسين (ع)','j'],[8,4,'مولد أبي الفضل العباس (ع)','j'],[8,5,'مولد الإمام زين العابدين (ع)','j'],[8,15,'مولد الإمام المهدي (عج)','j'],[9,1,'بداية شهر رمضان المبارك','j'],[9,15,'مولد الإمام الحسن (ع)','j'],[9,21,'استشهاد أمير المؤمنين الإمام علي (ع)','m'],[10,1,'عيد الفطر المبارك','j'],[10,25,'استشهاد الإمام الصادق (ع)','m'],[11,11,'مولد الإمام الرضا (ع)','j'],[12,9,'يوم عرفة','j'],[12,10,'عيد الأضحى المبارك','j'],[12,18,'عيد الغدير الأغر','j']];
+const hoff=()=>+(localStorage.getItem('gc_hoff')||0),shift=d=>new Date(d.getTime()+hoff()*864e5);
+const hj=d=>{const p=new Intl.DateTimeFormat('en-u-ca-islamic-civil-nu-latn',{day:'numeric',month:'numeric',year:'numeric'}).formatToParts(shift(d)),g=t=>+p.find(x=>x.type===t).value;return{y:g('year'),m:g('month'),d:g('day')}};
+const ar=t=>String(t).replace(/\d/g,c=>'٠١٢٣٤٥٦٧٨٩'[c]),hLabel=d=>{const h=hj(d);return ar(h.d+' '+HM[h.m-1]+' '+h.y)+' هـ'},gLabel=d=>new Intl.DateTimeFormat('ar-IQ',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(d);
+const rel=n=>n===0?'اليوم':n===1?'غدًا':n===2?'بعد غد':'بعد '+n+' أيام';
+const day0=()=>{const d=new Date();d.setHours(12,0,0,0);return d};
+const cj=()=>{try{return JSON.parse(localStorage.getItem('gc_occ')||'[]')}catch(e){return[]}};
+function upcoming(n){const o=[],t=day0();for(let i=0;i<n;i++){const d=new Date(t.getTime()+i*864e5),h=hj(d);OCC.forEach(x=>{if(x[0]===h.m&&x[1]===h.d)o.push({d,i,t:x[2],ty:x[3]})});cj().forEach(c=>{if(c.date===d.toISOString().slice(0,10)||c.date===isoOf(d))o.push({d,i,t:c.t,ty:c.ty,cid:c.id})})}return o}
+const isoOf=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+function occCard(title,ty,d,i){const greet=ty==='m'?'أعظم الله أجورنا وأجوركم':'كل عام وأنتم بخير',k=i==null?'مناسبة':rel(i)==='اليوم'?'اليوم':rel(i)==='غدًا'?'غدًا':'ذكرى قريبة';
+ const lines=[hLabel(d),gLabel(d)];cardShow({type:ty,kicker:k,title,lines,greeting:greet,back:'gcOcc()'},(i===0?'اليوم':i===1?'غدًا':'')+' '+title+'\n'+hLabel(d)+' — '+gLabel(d)+'\n'+greet+'\n\n— الأستاذ علي')}
+window.gcOccCard=(k)=>{const u=upcoming(120)[k];if(u)occCard(u.t,u.ty,u.d,u.i)};
+window.gcOccAll=()=>{const v=$('occ-sel').value;if(v==='')return;const x=OCC[+v],t=day0();for(let i=0;i<400;i++){const d=new Date(t.getTime()+i*864e5),h=hj(d);if(h.m===x[0]&&h.d===x[1]){occCard(x[2],x[3],d,i);return}}};
+window.gcOccNow=()=>{const t=$('occ-t').value.trim(),dv=$('occ-d').value;if(!t){toast('اكتب اسم المناسبة');return}const d=dv?new Date(dv+'T12:00:00'):day0(),n=Math.round((d-day0())/864e5);occCard(t,$('occ-ty').value,d,n>=0?n:null)};
+window.gcOccSave=()=>{const t=$('occ-t').value.trim(),dv=$('occ-d').value;if(!t||!dv){toast('اكتب الاسم واختر التاريخ');return}const l=cj();l.push({id:'c'+Date.now(),t,date:dv,ty:$('occ-ty').value});localStorage.setItem('gc_occ',JSON.stringify(l));toast('تمت إضافة المناسبة ✓');gcOcc()};
+window.gcOccDel=id=>{localStorage.setItem('gc_occ',JSON.stringify(cj().filter(x=>x.id!==id)));gcOcc()};
+window.gcOccOff=v=>{localStorage.setItem('gc_hoff',v);gcOcc()};
+window.gcOcc=function(){const U=upcoming(90).slice(0,8),all=cj().sort((a,b)=>a.date<b.date?-1:1);
+ modal('<h3>🕌 المناسبات الدينية</h3><small>التاريخ الهجري اليوم: <b>'+hLabel(day0())+'</b> · قد يختلف يومًا بحسب الرؤية: <select onchange="gcOccOff(this.value)"><option value="-1"'+(hoff()===-1?' selected':'')+'>−1 يوم</option><option value="0"'+(hoff()===0?' selected':'')+'>بلا تعديل</option><option value="1"'+(hoff()===1?' selected':'')+'>+1 يوم</option></select></small>'+
+ '<h4>القادمة</h4>'+(U.length?U.map((u,k)=>'<div class="occ-r"><span><b>'+esc(u.t)+'</b><small>'+rel(u.i)+' · '+hLabel(u.d)+'</small></span><button onclick="gcOccCard('+k+')">🖼️ بطاقة</button></div>').join(''):'<small>لا مناسبات خلال 90 يومًا.</small>')+
+ '<h4>اختر مناسبة لإنشاء بطاقتها</h4><div class="occ-f"><select id="occ-sel"><option value="">— اختر —</option>'+OCC.map((x,i)=>'<option value="'+i+'">'+esc(x[2])+' ('+x[1]+' '+HM[x[0]-1]+')</option>').join('')+'</select><button onclick="gcOccAll()">🖼️ بطاقة المناسبة</button></div>'+
+ '<h4>مناسبة يدوية</h4><div class="occ-f"><input id="occ-t" placeholder="اسم المناسبة"><input id="occ-d" type="date"><select id="occ-ty"><option value="m">ذكرى حزينة (أعظم الله أجورنا)</option><option value="j">مناسبة سعيدة (كل عام وأنتم بخير)</option></select><button onclick="gcOccNow()">🖼️ بطاقة الآن</button><button onclick="gcOccSave()">➕ حفظ في القائمة</button></div>'+
+ (all.length?'<h4>مناسباتك المحفوظة</h4>'+all.map(c=>'<div class="occ-r"><span><b>'+esc(c.t)+'</b><small>'+c.date+'</small></span><span><button onclick="gcOccNow2(\''+c.id+'\')">🖼️</button> <button style="background:#c0392b;color:#fff" onclick="gcOccDel(\''+c.id+'\')">🗑</button></span></div>').join(''):'')+
+ '<div class="modal-actions"><button class="secondary" onclick="closeModal()">إغلاق</button></div>')};
+window.gcOccNow2=id=>{const c=cj().find(x=>x.id===id);if(!c)return;const d=new Date(c.date+'T12:00:00'),n=Math.round((d-day0())/864e5);occCard(c.t,c.ty,d,n>=0?n:null)};
+setInterval(()=>{try{rmUI();badges()}catch(e){}},1500);
 });
 </script>
 
