@@ -1647,5 +1647,93 @@ setInterval(()=>{try{rmUI();badges()}catch(e){}},1500);
 });
 </script>
 
+<script id="gc-patch5-js">
+gcWhenReady(function(){
+const $=id=>document.getElementById(id);
+const E=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+/* ===== أنماط الإضافات ===== */
+if(!$('gc-talk-css')){const s=document.createElement('style');s.id='gc-talk-css';s.textContent=
+'.occ-r button.gc-snd,.occ-f button.gc-snd,#gc-rm button.gc-snd{background:linear-gradient(135deg,#9be3b6,#34a56a);color:#08301a}'+
+'.occ-r>span>.gc-snd,#gc-rm .gc-snd{margin-inline-start:6px}'+
+'.tk-t{width:100%;border-radius:12px;padding:10px;border:1px solid #ffffff33;background:#ffffff0f;color:inherit;font:inherit;line-height:1.9;margin:6px 0}'+
+'.tk-l{max-height:28vh;overflow:auto;border:1px solid #ffffff22;border-radius:12px;padding:4px 10px;margin:6px 0}'+
+'.tk-l label{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #ffffff12}'+
+'.tk-l input,.tk-all input{width:auto;margin:0}.tk-all{display:flex;align-items:center;gap:8px;font-weight:700;margin:8px 0}'+
+'#tk-stage{position:fixed;inset:0;z-index:100000;background:radial-gradient(circle at 50% 0,#1d2f4d,#070d18 70%);color:#f6f4ed;display:flex;flex-direction:column;padding:16px;direction:rtl}'+
+'#tk-stage h2{margin:0;text-align:center;color:#ffe08a;font-size:21px}#tk-stage .tk-sub{text-align:center;color:#aab6c8;font-size:13px;margin:4px 0 8px}'+
+'#tk-chat{flex:1;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:6px 2px}'+
+'.tk-b{max-width:88%;padding:12px 14px;border-radius:16px;font-size:19px;line-height:1.9;opacity:.35;transition:opacity .25s}.tk-b small{display:block;font-size:12px;color:#ffe08a;margin-bottom:2px}'+
+'.tk-b.on{opacity:1;box-shadow:0 0 18px #f4c75b66}.tk-b.done{opacity:.8}'+
+'.tk-b.s{align-self:flex-start;background:#1f3b63}.tk-b.m{align-self:flex-end;background:#5a2a52}.tk-b.f{align-self:flex-end;background:#2f4a3a}.tk-b.t{align-self:center;background:#4a3f1c}'+
+'.tk-wave{display:flex;gap:4px;justify-content:center;align-items:center;height:28px}.tk-wave i{width:5px;height:6px;border-radius:3px;background:#f4c75b;animation:tkw .9s ease-in-out infinite}'+
+'.tk-wave i:nth-child(2){animation-delay:.1s}.tk-wave i:nth-child(3){animation-delay:.2s}.tk-wave i:nth-child(4){animation-delay:.3s}.tk-wave i:nth-child(5){animation-delay:.4s}'+
+'.tk-wave.off i{animation:none}@keyframes tkw{0%,100%{height:6px}50%{height:24px}}'+
+'#tk-ctl{display:flex;gap:10px;justify-content:center;margin-top:10px}#tk-ctl button{border:0;border-radius:999px;padding:12px 22px;font:inherit;font-weight:700;background:linear-gradient(135deg,#fff0a7,#e8b83d);color:#211a08}#tk-ctl button.x{background:#e5384b;color:#fff}';
+document.head.appendChild(s)}
+
+/* ===== 1) إرسال للجروب من بطاقات المناسبات وقدوة الصف ===== */
+/* مشاركة أمتن: إن لم تدعم الصور تُنزَّل البطاقة ويُفتح واتساب بالنص */
+window.gcShareCanvas=function(cv,name,text){cv.toBlob(async b=>{const f=new File([b],name,{type:'image/png'});
+ const dl=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();toast('نُزّلت البطاقة، أرفقها في الجروب');setTimeout(()=>{try{window.open('https://wa.me/?text='+encodeURIComponent(text||''),'_blank','noopener')}catch(e){}},700)};
+ try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],text});return}}
+ catch(e){if(e&&e.name==='AbortError')return;if(e&&e.name==='NotAllowedError'){toast('اضغط «📲 إرسال للجروب» مرة أخرى لإتمام الإرسال');return}}
+ dl()},'image/png')};
+function autoSend(){let n=0;const iv=setInterval(()=>{n++;const s=$('gc-csh');if(s){clearInterval(iv);setTimeout(()=>s.click(),250)}else if(n>40)clearInterval(iv)},150)}
+const SND=['.occ-r button[onclick^="gcOccCard"]','.occ-r button[onclick^="gcOccNow2"]','.occ-f button[onclick^="gcOccAll"]','.occ-f button[onclick^="gcOccNow()"]','#gc-rm button[onclick^="gcRmCard"]'];
+function addSnd(){SND.forEach(q=>document.querySelectorAll(q).forEach(b=>{const nx=b.nextElementSibling;if(nx&&nx.hasAttribute('data-snd'))return;
+ const n=document.createElement('button');n.setAttribute('data-snd','');n.className='gc-snd';n.textContent='📲 إرسال للجروب';n.onclick=()=>{b.click();autoSend()};
+ if(b.parentElement&&b.parentElement.classList.contains('occ-r')){const w=document.createElement('span');b.replaceWith(w);w.append(b,n)}else b.after(n)}))}
+let _t=0;new MutationObserver(()=>{clearTimeout(_t);_t=setTimeout(addSnd,60)}).observe(document.body,{childList:true,subtree:true});addSnd();
+
+/* ===== 2) نقاشات التلاميذ مع أهلهم (في الأدوات) ===== */
+const _mt=window.moreTools;window.moreTools=function(){_mt.apply(this,arguments);const w=document.querySelector('.awrap');
+ if(w&&!w.querySelector('[data-gc2]'))w.insertAdjacentHTML('afterbegin','<button class="gold-btn" data-gc2 onclick="gcTalk()">💬 نقاشات التلاميذ مع أهلهم</button>')};
+const tk=()=>{data.talks=data.talks||{text:'',sel:[],rate:.9};return data.talks};
+const sorted=()=>[...data.students].sort((a,b)=>String(a.name).localeCompare(String(b.name),'ar'));
+const first=n=>String(n||'').trim().split(/\s+/)[0];
+const WHO={'التلميذ':'s','الطالب':'s','الأم':'m','الام':'m','الأب':'f','الاب':'f','المعلم':'t','الأستاذ':'t','الاستاذ':'t'};
+const LAB={s:'',m:'الأم',f:'الأب',t:'المعلم'},PT={s:1.3,m:1.1,f:.7,t:.9};
+function parse(t){return String(t).split(/\n+/).map(x=>x.trim()).filter(Boolean).map(x=>{const m=x.match(/^(التلميذ|الطالب|الأم|الام|الأب|الاب|المعلم|الأستاذ|الاستاذ)\s*[:：]\s*(.+)$/);return m?{w:WHO[m[1]],x:m[2]}:{w:'s',x}})}
+window.gcTalk=function(){const T=tk(),L=sorted(),sel=new Set(T.sel||[]);
+ modal('<h3>💬 نقاشات التلاميذ مع أهلهم</h3><small>اكتب عبارات على لسان حال التلميذ، كل عبارة في سطر. اكتب {الاسم} ليُستبدل باسم التلميذ. وللتنويع ابدأ السطر بـ «الأم:» أو «الأب:» أو «التلميذ:» فتتغير نبرة الصوت. وتُقرأ العبارات بصوت الجهاز كأنها نقاش جرى بين التلميذ وأهله (تمثيلية تربوية).</small>'+
+ '<textarea id="tk-t" class="tk-t" rows="8" placeholder="مثال:&#10;التلميذ: أعدكم يا أمي أن أنجز واجبي كل يوم.&#10;الأم: أحسنت يا {الاسم}، نحن فخورون بك.&#10;التلميذ: وسأنام باكرًا لأصحو نشيطًا.">'+E(T.text||'')+'</textarea>'+
+ '<label class="tk-all"><input type="checkbox" id="tk-all"> اختيار كل التلاميذ ('+L.length+')</label>'+
+ '<div class="tk-l">'+(L.map(s=>'<label><input type="checkbox" class="tk-c" value="'+E(s.id)+'"'+(sel.has(s.id)?' checked':'')+'> '+E(s.name)+'</label>').join('')||'<small>لا تلاميذ بعد.</small>')+'</div>'+
+ '<label>سرعة القراءة: <input type="range" id="tk-r" min="0.6" max="1.2" step="0.05" value="'+(T.rate||.9)+'" style="width:100%"></label>'+
+ '<div class="modal-actions"><button class="gold-btn" onclick="gcTalkGo()">▶ ابدأ القراءة</button><button class="secondary" onclick="closeModal()">إغلاق</button></div>');
+ const all=$('tk-all'),cs=()=>[...document.querySelectorAll('.tk-c')],sync=()=>{all.checked=cs().length>0&&cs().every(c=>c.checked)};
+ all.onchange=()=>cs().forEach(c=>c.checked=all.checked);cs().forEach(c=>c.onchange=sync);sync()};
+
+/* صوت عربي + قراءة متسلسلة */
+const arV=()=>{try{return speechSynthesis.getVoices().find(x=>/^ar/i.test(x.lang))||null}catch(e){return null}};
+const voicesReady=()=>new Promise(res=>{try{if(speechSynthesis.getVoices().length)return res();let d=0;const f=()=>{if(!d){d=1;res()}};speechSynthesis.addEventListener('voiceschanged',f);setTimeout(f,900)}catch(e){res()}});
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let cur=null;
+function say(txt,w,rate,st){return new Promise(res=>{const parts=String(txt).match(/[^.!؟?]+[.!؟?]*/g)||[String(txt)];let i=0;
+ const nx=()=>{if(i>=parts.length||st.stop||st.skip)return res();const u=new SpeechSynthesisUtterance(parts[i++].trim());u.lang='ar-SA';const v=arV();if(v)u.voice=v;u.rate=rate;u.pitch=PT[w]||1;u.onend=nx;u.onerror=()=>res();speechSynthesis.speak(u)};nx()})}
+function closeStage(){if(cur)cur.stop=true;try{speechSynthesis.cancel()}catch(e){}const o=$('tk-stage');if(o)o.remove();cur=null}
+window.gcTalkStop=closeStage;
+window.gcTalkSkip=()=>{if(cur){cur.skip=true;try{speechSynthesis.cancel()}catch(e){}}};
+async function play(S,lines,rate){
+ if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){toast('هذا المتصفح لا يدعم القراءة الصوتية');return}
+ closeStage();const st=cur={stop:false,skip:false};
+ const o=document.createElement('div');o.id='tk-stage';o.innerHTML='<h2 id="tk-h"></h2><div class="tk-sub" id="tk-s"></div><div class="tk-wave" id="tk-w"><i></i><i></i><i></i><i></i><i></i></div><div id="tk-chat"></div><div id="tk-ctl"><button onclick="gcTalkSkip()">⏭ التالي</button><button class="x" onclick="gcTalkStop()">⏹ إيقاف</button></div>';document.body.appendChild(o);
+ await voicesReady();if(!arV())toast('لا يوجد صوت عربي في هذا الجهاز، سيُستخدم الصوت الافتراضي');
+ for(let i=0;i<S.length&&!st.stop;i++){st.skip=false;const s=S[i],fn=first(s.name);
+  $('tk-h').textContent='🎙️ نقاش '+s.name+' مع أهله';$('tk-s').textContent=(i+1)+' من '+S.length;$('tk-w').classList.remove('off');
+  const ch=$('tk-chat');ch.innerHTML=lines.map((l,k)=>'<div class="tk-b '+l.w+'" id="tk-b'+k+'"><small>'+(l.w==='s'?E(fn):LAB[l.w])+'</small>'+E(l.x.replace(/\{(الاسم|n)\}/g,fn))+'</div>').join('');
+  for(let k=0;k<lines.length&&!st.stop&&!st.skip;k++){const b=$('tk-b'+k);if(!b)break;b.classList.add('on');b.scrollIntoView({block:'center',behavior:'smooth'});
+   await say(lines[k].x.replace(/\{(الاسم|n)\}/g,fn),lines[k].w,rate,st);b.classList.remove('on');b.classList.add('done');if(!st.stop&&!st.skip)await sleep(500)}
+  if(!st.stop&&i<S.length-1)await sleep(1200)}
+ if(!st.stop){const w=$('tk-w');if(w)w.classList.add('off');const h=$('tk-s');if(h)h.textContent='انتهى النقاش ✓';const c=$('tk-ctl');if(c)c.innerHTML='<button onclick="gcTalkStop()">إغلاق</button>'}}
+window.gcTalkGo=function(){const t=($('tk-t')||{}).value||'',ids=[...document.querySelectorAll('.tk-c:checked')].map(x=>x.value),rate=parseFloat(($('tk-r')||{}).value)||.9,lines=parse(t);
+ if(!lines.length){toast('اكتب عبارة واحدة على الأقل');return}
+ if(!ids.length){toast('اختر تلميذًا واحدًا على الأقل');return}
+ const T=tk();T.text=t;T.sel=ids;T.rate=rate;try{store()}catch(e){}
+ const S=sorted().filter(s=>ids.includes(s.id));closeModal();play(S,lines,rate)};
+});
+</script>
+
 </body>
 </html>
